@@ -17,7 +17,8 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private var drawing = true
     lateinit var canvas:Canvas
     lateinit var thread:Thread
-    var flo_flo = 515
+    var test = 8
+    var teste = 9
     private fun draw(){
         if(holder.surface.isValid){
             canvas =holder.lockCanvas()
