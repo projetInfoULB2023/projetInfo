@@ -17,22 +17,27 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private var drawing = true
     lateinit var canvas:Canvas
     lateinit var thread:Thread
+    var monRect = Rectangle(50F,150F,50F,150F,5F)
     private fun draw(){
         if(holder.surface.isValid){
             canvas =holder.lockCanvas()
             backgroundPaint.color= Color.WHITE
-            canvas?.drawRect(0F,0F,width.toFloat(),height.toFloat(),backgroundPaint)
-            //Code pour dessiner ici
-            holder.unlockCanvasAndPost(canvas)
 
+            //Code pour dessiner ici
+
+            var paint=Paint()
+            paint.color=Color.RED
+            canvas?.drawRect(100F,150F,150F,200F,paint)
+            monRect.bouge(canvas)
+
+            //Fin code pour dessiner
+            holder.unlockCanvasAndPost(canvas)
         }
     }
-
     fun pause(){
         drawing = false
         thread.join()
     }
-
     fun resume(){
         drawing = true
         thread=Thread(this)
@@ -50,7 +55,6 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         }
         //invalidate permet de dessiner ce qui a été changé
         invalidate()
-
         return true
     }
 
@@ -59,18 +63,13 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
             draw()
         }
     }
-
     override fun surfaceCreated(p0: SurfaceHolder) {
         TODO("Not yet implemented")
     }
-
     override fun surfaceChanged(p0: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
         TODO("Not yet implemented")
     }
-
     override fun surfaceDestroyed(p0: SurfaceHolder) {
         TODO("Not yet implemented")
     }
-
-
 }
