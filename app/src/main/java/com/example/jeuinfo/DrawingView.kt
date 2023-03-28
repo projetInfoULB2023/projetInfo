@@ -17,7 +17,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private var drawing = true
     lateinit var canvas:Canvas
     lateinit var thread:Thread
-    var flolfo = 15
+    var flolfo = 50
     var robin = 3
     var test = 2
     var matteo = 6
