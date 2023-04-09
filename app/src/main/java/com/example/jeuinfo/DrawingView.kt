@@ -17,22 +17,29 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private var drawing = true
     lateinit var canvas:Canvas
     lateinit var thread:Thread
-    var monRect = Rectangle(50F,150F,50F,150F,5F)
+    private val tailleJoueur = 50
+    private lateinit var posJoueur:Array<Int>
+    private var setup = false
     private fun draw(){
         if(holder.surface.isValid){
             canvas =holder.lockCanvas()
+            //Permet de ne pas acculumer les éléments dessinés
             backgroundPaint.color= Color.WHITE
-
+            canvas?.drawRect(0F,0F,width.toFloat(),height.toFloat(),backgroundPaint)
             //Code pour dessiner ici
-
-            var paint=Paint()
-            paint.color=Color.RED
-            canvas?.drawRect(100F,150F,150F,200F,paint)
-            monRect.bouge(canvas)
-
+            drawPlayer()
             //Fin code pour dessiner
             holder.unlockCanvasAndPost(canvas)
         }
+    }
+    private fun drawPlayer(){
+        if(!setup){
+            posJoueur= arrayOf(width/2,height*7/8)
+            setup = true
+        }
+        var paint=Paint()
+        paint.color=Color.BLUE
+        canvas.drawRect((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),(posJoueur[0]+tailleJoueur).toFloat(),(posJoueur[1]-tailleJoueur).toFloat(),paint)
     }
     fun pause(){
         drawing = false
@@ -46,10 +53,13 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
 
     override fun onTouchEvent(e: MotionEvent): Boolean {
         //S'active quand l'écran est touché
+        println(posJoueur[0])
         if (e.action == MotionEvent.ACTION_DOWN) {
+            print("$width, $height")
             // x et y donnent la position du click, il faudrait encore tester le y par rapport à la position de notre drawingview sur l'écran
             val x = e.rawX
-            val y = e.rawY - 800
+            //Le -724 est à retester avec d'autres tailles d'écran
+            val y = e.rawY - 724
 
             println("($x,$y)")
         }
