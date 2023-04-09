@@ -1,8 +1,11 @@
 package com.example.jeuinfo
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
 import android.os.Bundle
+import android.util.DisplayMetrics
+import androidx.appcompat.app.AppCompatActivity
 import com.example.jeuinfo.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var drawingView:DrawingView
@@ -10,7 +13,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding =ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val displayMetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val height = displayMetrics.heightPixels
+        val width = displayMetrics.widthPixels
         drawingView = binding.vMain
+        drawingView.getDimensions(width,height)
         drawingView.setWillNotDraw(false)
         drawingView.invalidate()
     }
