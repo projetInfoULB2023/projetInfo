@@ -7,7 +7,7 @@ import android.graphics.RectF
 import java.util.*
 
 
-class Element(x1:Float, y1:Float, x2:Float, y2:Float,color:Int) {
+open class Element(x1:Float, y1:Float, x2:Float, y2:Float,color:Int) {
     private val random = Random()
     private val paint = Paint()
     private val vitesseCam = 0.5F
@@ -25,7 +25,7 @@ class Element(x1:Float, y1:Float, x2:Float, y2:Float,color:Int) {
         canvas?.drawRect(r,paint)
     }
     fun avance(canvas:Canvas){
-        r.offset(0F, vitesseCam.toFloat())
+        r.offset(0F, dy*vitesseCam.toFloat())
         y1+=vitesseCam
         y2+=vitesseCam
         draw(canvas)

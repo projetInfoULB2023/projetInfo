@@ -15,7 +15,6 @@ import kotlin.math.abs
 //Cam avance automatiquement, possible de reculer, devant à gauche ou à droite, obstacles bougent tout seuls horizontalement
 //mort quand colision avec un obstacle,
 
-
 class DrawingView @JvmOverloads constructor (context: Context, attributes: AttributeSet? = null, defStyleAttr: Int = 0): SurfaceView(context, attributes,defStyleAttr),
     SurfaceHolder.Callback,Runnable {
     private var deviceHeight = 0
@@ -33,7 +32,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private var setup = false
     private  var elements = ArrayList<Element>()
     private lateinit var test1 : Element
-    private lateinit var joueur: Element
+    private lateinit var joueur: Joueur
     //Entrée touche
     var x1=0F
     var x2=0F
@@ -46,33 +45,33 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
             backgroundPaint.color= Color.WHITE
             canvas?.drawRect(0F,0F,width.toFloat(),height.toFloat(),backgroundPaint)
             //Code pour dessiner ici
-            drawObstacles()
-            drawPlayer()
+            if(!setup){
+                drawObstacles()
+                drawPlayer()
+                setup = true
+            }
+            tickGame()
             //Fin code pour dessiner
             holder.unlockCanvasAndPost(canvas)
         }
     }
-    private fun drawObstacles(){
-        if(!setup){
-            test1 = Element(0F,200F,width.toFloat(),300F,red)
-            elements.add(test1)
-        }
-    }
-    private fun drawPlayer(){
-        if(!setup){
-            //alligne le joueur et les obstacles
-            val reste = height*7/8 % tailleJoueur
-            posJoueur= arrayOf(width/2,height*7/8-reste)
-            joueur = Element((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),(posJoueur[0]+tailleJoueur).toFloat(),(posJoueur[1]-tailleJoueur).toFloat(),blue)
-            elements.add(joueur)
-            setup = true
-        }
-        var paintPlayer=Paint()
-        paintPlayer.color=Color.BLUE
-        canvas.drawRect(joueur.r,paintPlayer)
+    private fun tickGame(){
         for(obs in elements){
             obs.avance(canvas)
         }
+        joueur.detectSortieEcran()
+    }
+    private fun drawObstacles(){
+        test1 = Element(0F,200F,width.toFloat(),300F,red)
+        elements.add(test1)
+    }
+    private fun drawPlayer(){
+        //alligne le joueur et les obstacles
+        val reste = height*7/8 % tailleJoueur
+        posJoueur= arrayOf(width/2,height*7/8-reste)
+        joueur = Joueur((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),(posJoueur[0]+tailleJoueur).toFloat(),
+            (posJoueur[1]-tailleJoueur).toFloat(),width.toFloat(),tailleJoueur)
+        elements.add(joueur)
     }
     fun pause(){
         drawing = false
