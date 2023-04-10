@@ -1,4 +1,4 @@
 package com.example.jeuinfo
 
-class ObstacleMouvant() {
+class ObstacleMouvant {
 }
