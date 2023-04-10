@@ -70,7 +70,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         tailleJoueur = width/24F
         saut = tailleJoueur*2F
         val reste = height*7/8 % tailleJoueur
-        posJoueur= arrayOf(width/12*5F-tailleJoueur,height*7/8-reste)
+        posJoueur= arrayOf(width/12*7F-tailleJoueur,height*7/8-reste)
         joueur = Joueur((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),(posJoueur[0]+tailleJoueur).toFloat(),
             (posJoueur[1]-tailleJoueur).toFloat(),width.toFloat(),tailleJoueur)
         elements.add(joueur)
