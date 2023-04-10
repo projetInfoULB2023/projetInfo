@@ -35,6 +35,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private lateinit var barre1  : Element
     private lateinit var joueur: Joueur
     private lateinit var music1 : MediaPlayer
+    private var reste = 0F
     //Entrée touche
     var x1=0F
     var x2=0F
@@ -48,6 +49,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
             canvas?.drawRect(0F,0F,width.toFloat(),height.toFloat(),backgroundPaint)
             //Code pour dessiner ici
             if(!setup){
+                setupVariables()
                 drawObstacles()
                 drawPlayer()
                 setup = true
@@ -56,6 +58,11 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
             //Fin code pour dessiner
             holder.unlockCanvasAndPost(canvas)
         }
+    }
+    private fun setupVariables(){
+        tailleJoueur = width/24F
+        saut = tailleJoueur*2F
+        reste = height*7/8 % tailleJoueur
     }
     private fun tickGame(){
         for(obs in elements){
@@ -68,14 +75,11 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         music1 = music
     }
     private fun drawObstacles(){
-        barre1 = Element(0F,200F,width.toFloat(),300F,red)
+        barre1 = Element(0F,200F,width.toFloat(),6*tailleJoueur,red)
         elements.add(barre1)
     }
     private fun drawPlayer(){
         //alligne le joueur et les obstacles
-        tailleJoueur = width/24F
-        saut = tailleJoueur*2F
-        val reste = height*7/8 % tailleJoueur
         posJoueur= arrayOf(width/12*7F-tailleJoueur,height*7/8-reste)
         joueur = Joueur((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),(posJoueur[0]+tailleJoueur).toFloat(),
             (posJoueur[1]-tailleJoueur).toFloat(),width.toFloat(),height.toFloat(),tailleJoueur,music1)
