@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.media.MediaPlayer
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
@@ -33,6 +34,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private  var elements = ArrayList<Element>()
     private lateinit var barre1  : Element
     private lateinit var joueur: Joueur
+    private lateinit var music1 : MediaPlayer
     //Entrée touche
     var x1=0F
     var x2=0F
@@ -61,6 +63,10 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         }
         joueur.detectSortieEcran()
     }
+
+    fun getMediaPlayer(music:MediaPlayer){
+        music1 = music
+    }
     private fun drawObstacles(){
         barre1 = Element(0F,200F,width.toFloat(),300F,red)
         elements.add(barre1)
@@ -72,7 +78,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         val reste = height*7/8 % tailleJoueur
         posJoueur= arrayOf(width/12*7F-tailleJoueur,height*7/8-reste)
         joueur = Joueur((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),(posJoueur[0]+tailleJoueur).toFloat(),
-            (posJoueur[1]-tailleJoueur).toFloat(),width.toFloat(),tailleJoueur)
+            (posJoueur[1]-tailleJoueur).toFloat(),width.toFloat(),height.toFloat(),tailleJoueur,music1)
         elements.add(joueur)
     }
     fun pause(){
