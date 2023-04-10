@@ -24,14 +24,14 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private var drawing = true
     lateinit var canvas:Canvas
     lateinit var thread:Thread
-    private val tailleJoueur = 50
-    private val saut = tailleJoueur*2
+    private var tailleJoueur = 0F
+    private var saut = 0F
     private val blue = Color.BLUE
     private val red = Color.RED
-    private lateinit var posJoueur:Array<Int>
+    private lateinit var posJoueur:Array<Float>
     private var setup = false
     private  var elements = ArrayList<Element>()
-    private lateinit var test1 : Element
+    private lateinit var barre1  : Element
     private lateinit var joueur: Joueur
     //Entrée touche
     var x1=0F
@@ -62,13 +62,15 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         joueur.detectSortieEcran()
     }
     private fun drawObstacles(){
-        test1 = Element(0F,200F,width.toFloat(),300F,red)
-        elements.add(test1)
+        barre1 = Element(0F,200F,width.toFloat(),300F,red)
+        elements.add(barre1)
     }
     private fun drawPlayer(){
         //alligne le joueur et les obstacles
+        tailleJoueur = width/24F
+        saut = tailleJoueur*2F
         val reste = height*7/8 % tailleJoueur
-        posJoueur= arrayOf(width/2,height*7/8-reste)
+        posJoueur= arrayOf(width/12*5F-tailleJoueur,height*7/8-reste)
         joueur = Joueur((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),(posJoueur[0]+tailleJoueur).toFloat(),
             (posJoueur[1]-tailleJoueur).toFloat(),width.toFloat(),tailleJoueur)
         elements.add(joueur)

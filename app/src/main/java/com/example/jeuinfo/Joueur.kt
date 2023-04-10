@@ -2,7 +2,7 @@ package com.example.jeuinfo
 
 import android.graphics.Color
 
-class Joueur(x1:Float,x2:Float,x3:Float,x4:Float,width:Float,taillejoueur:Int) : Element(x1,x2,x3,x4,Color.BLUE) {
+class Joueur(x1:Float,y1:Float,x2:Float,y2:Float,width:Float,taillejoueur:Float) : Element(x1,y1,x2,y2,Color.BLUE) {
     private val width = width
     private val taillejoueur= taillejoueur
     fun detectSortieEcran(){
