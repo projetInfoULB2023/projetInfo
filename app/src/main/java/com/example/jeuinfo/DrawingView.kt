@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.media.MediaPlayer
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
@@ -24,15 +25,16 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private var drawing = true
     lateinit var canvas:Canvas
     lateinit var thread:Thread
-    private val tailleJoueur = 50
-    private val saut = tailleJoueur*2
+    private var tailleJoueur = 0F
+    private var saut = 0F
     private val blue = Color.BLUE
     private val red = Color.RED
-    private lateinit var posJoueur:Array<Int>
+    private lateinit var posJoueur:Array<Float>
     private var setup = false
     private  var elements = ArrayList<Element>()
-    private lateinit var test1 : Element
+    private lateinit var barre1  : Element
     private lateinit var joueur: Joueur
+    private lateinit var music1 : MediaPlayer
     //Entrée touche
     var x1=0F
     var x2=0F
@@ -61,16 +63,22 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         }
         joueur.detectSortieEcran()
     }
+
+    fun getMediaPlayer(music:MediaPlayer){
+        music1 = music
+    }
     private fun drawObstacles(){
-        test1 = Element(0F,200F,width.toFloat(),300F,red)
-        elements.add(test1)
+        barre1 = Element(0F,200F,width.toFloat(),300F,red)
+        elements.add(barre1)
     }
     private fun drawPlayer(){
         //alligne le joueur et les obstacles
+        tailleJoueur = width/24F
+        saut = tailleJoueur*2F
         val reste = height*7/8 % tailleJoueur
-        posJoueur= arrayOf(width/2,height*7/8-reste)
+        posJoueur= arrayOf(width/12*7F-tailleJoueur,height*7/8-reste)
         joueur = Joueur((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),(posJoueur[0]+tailleJoueur).toFloat(),
-            (posJoueur[1]-tailleJoueur).toFloat(),width.toFloat(),tailleJoueur)
+            (posJoueur[1]-tailleJoueur).toFloat(),width.toFloat(),height.toFloat(),tailleJoueur,music1)
         elements.add(joueur)
     }
     fun pause(){
