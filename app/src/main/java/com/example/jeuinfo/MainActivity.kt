@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         val height = displayMetrics.heightPixels
         val width = displayMetrics.widthPixels
+
         drawingView = binding.vMain
         drawingView.getDimensions(width,height)
         drawingView.setWillNotDraw(false)

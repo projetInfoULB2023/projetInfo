@@ -16,7 +16,6 @@ class Element(x1:Float, y1:Float, x2:Float, y2:Float,color:Int) {
     var y1: Float= y1
     var x2: Float= x2
     var y2: Float= y2
-    var dx = 0
     var r = RectF(x1,x2,y1,y2)
     var dy= 1
 
@@ -26,7 +25,7 @@ class Element(x1:Float, y1:Float, x2:Float, y2:Float,color:Int) {
         canvas?.drawRect(r,paint)
     }
     fun avance(canvas:Canvas){
-        r.offset(dx.toFloat(),dy*vitesseCam.toFloat())
+        r.offset(0F, vitesseCam.toFloat())
         y1+=vitesseCam
         y2+=vitesseCam
         draw(canvas)

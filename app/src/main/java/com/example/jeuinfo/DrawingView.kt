@@ -27,8 +27,8 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     lateinit var thread:Thread
     private val tailleJoueur = 50
     private val saut = tailleJoueur*2
-    val blue = Color.BLUE
-    val red = Color.RED
+    private val blue = Color.BLUE
+    private val red = Color.RED
     private lateinit var posJoueur:Array<Int>
     private var setup = false
     private  var elements = ArrayList<Element>()
@@ -60,7 +60,9 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     }
     private fun drawPlayer(){
         if(!setup){
-            posJoueur= arrayOf(width/2,height*7/8)
+            //alligne le joueur et les obstacles
+            val reste = height*7/8 % tailleJoueur
+            posJoueur= arrayOf(width/2,height*7/8-reste)
             joueur = Element((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),(posJoueur[0]+tailleJoueur).toFloat(),(posJoueur[1]-tailleJoueur).toFloat(),blue)
             elements.add(joueur)
             setup = true
@@ -94,7 +96,6 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
             MotionEvent.ACTION_DOWN ->{ x1 = e.rawX; y1=e.rawY}
             MotionEvent.ACTION_UP -> {
                 x2=e.rawX;y2=e.rawY
-                println("$x1,$x2,$y1,$y2")
                 //Direction de swipe
                 if(abs(x2-x1) > abs(y2-y1)){
                     //Mouvement horizontal, reste à déterminer gauche ou droite
@@ -121,6 +122,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 }
             }
         }
+
         if (e.action == MotionEvent.ACTION_DOWN) {
             // x et y donnent la position du click, il faudrait encore tester le y par rapport à la position de notre drawingview sur l'écran
             val x = e.rawX
