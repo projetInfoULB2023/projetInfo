@@ -13,8 +13,9 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.abs
 
-//Cam avance automatiquement, possible de reculer, devant à gauche ou à droite, obstacles bougent tout seuls horizontalement
-//mort quand colision avec un obstacle,
+//obstacles bougent tout seuls horizontalement
+//mort quand colision avec un obstacle
+//
 
 class DrawingView @JvmOverloads constructor (context: Context, attributes: AttributeSet? = null, defStyleAttr: Int = 0): SurfaceView(context, attributes,defStyleAttr),
     SurfaceHolder.Callback,Runnable {
@@ -75,7 +76,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         music1 = music
     }
     private fun drawObstacles(){
-        barre1 = Element(0F,200F,width.toFloat(),6*tailleJoueur,red)
+        barre1 = ObstacleMouvant(0F,200F,width/5.toFloat(),6*tailleJoueur,2F, width.toFloat())
         elements.add(barre1)
     }
     private fun drawPlayer(){

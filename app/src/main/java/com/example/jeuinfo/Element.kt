@@ -24,8 +24,8 @@ open class Element(x1:Float, y1:Float, x2:Float, y2:Float,color:Int) {
         paint.color = color
         canvas?.drawRect(r,paint)
     }
-    fun avance(canvas:Canvas){
-        r.offset(0F, dy*vitesseCam.toFloat())
+    open fun avance(canvas:Canvas){
+        r.offset(0F, dy*vitesseCam)
         y1+=vitesseCam
         y2+=vitesseCam
         draw(canvas)
