@@ -23,5 +23,4 @@ class ObstacleMouvant(x1:Float,y1:Float,x2:Float,y2:Float,vitesse:Float,width:Fl
         this.x1 += dx*vitesse
         this.x2 += dx*vitesse
     }
-
 }

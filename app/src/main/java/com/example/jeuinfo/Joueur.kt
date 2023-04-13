@@ -1,6 +1,7 @@
 package com.example.jeuinfo
 
 import android.graphics.Color
+import android.graphics.RectF
 import android.media.MediaPlayer
 
 class Joueur(x1:Float,y1:Float,x2:Float,y2:Float,width:Float,height:Float,taillejoueur:Float,deadSound:MediaPlayer) : Element(x1,y1,x2,y2,Color.BLUE) {
@@ -22,4 +23,12 @@ class Joueur(x1:Float,y1:Float,x2:Float,y2:Float,width:Float,height:Float,taille
             deadSound.start()
         }
     }
+    fun collision(obstacles:ArrayList<Element>){
+        for (obstacle in obstacles){
+            if (RectF.intersects(obstacle.r,this.r)){
+
+            }
+        }
+    }
+
 }

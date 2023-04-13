@@ -14,9 +14,10 @@ import kotlin.collections.ArrayList
 import kotlin.math.abs
 
 //Etapes importantes
+
 //Trouver une bonne taille d'obstacles et la faire correspondre avec la position du joueur
 //Eventuellement penser à des pouvoirs (blocs à récupérer pour avoir une vie en plus,sauter plus loin, détruire un obstacle, ...)
-//Mort quand colision avec un obstacle
+//Mort quand collision avec un obstacle
 //Image sur les obstacles
 //Génération automatique et aléatoire d'obstacles
 //Set up aléatoire d'obstacles au début, puis génération petit à petit.
@@ -37,7 +38,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private lateinit var posJoueur:Array<Float>
     private var setup = false
     private  var elements = ArrayList<Element>()
-    private lateinit var barre1  : Element
+    private lateinit var barre1  : ObstacleMouvant
     private lateinit var joueur: Joueur
     private lateinit var music1 : MediaPlayer
     private var reste = 0F
@@ -73,27 +74,32 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         for(obs in elements){
             obs.avance(canvas)
         }
+        joueur.avance(canvas)
         joueur.detectSortieEcran()
+        joueur.collision(elements)
     }
 
     fun getMediaPlayer(music:MediaPlayer){
         music1 = music
     }
+
     private fun drawObstacles(){
         barre1 = ObstacleMouvant(0F,200F,width/5.toFloat(),2*tailleJoueur,2F, width.toFloat())
         elements.add(barre1)
     }
+
     private fun drawPlayer(){
         //alligne le joueur et les obstacles
         posJoueur= arrayOf(width/12*7F-tailleJoueur,height*7/8-reste)
         joueur = Joueur((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),(posJoueur[0]+tailleJoueur).toFloat(),
             (posJoueur[1]-tailleJoueur).toFloat(),width.toFloat(),height.toFloat(),tailleJoueur,music1)
-        elements.add(joueur)
     }
+
     fun pause(){
         drawing = false
         thread.join()
     }
+
     fun resume(){
         drawing = true
         thread=Thread(this)
