@@ -13,8 +13,11 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.abs
 
-//obstacles bougent tout seuls horizontalement
-//mort quand colision avec un obstacle
+//Etapes importantes
+//Mort quand colision avec un obstacle
+//Image sur les obstacles
+//Génération automatique et aléatoire d'obstacles
+//Set up aléatoire d'obstacles au début, puis génération petit à petit.
 //
 
 class DrawingView @JvmOverloads constructor (context: Context, attributes: AttributeSet? = null, defStyleAttr: Int = 0): SurfaceView(context, attributes,defStyleAttr),
@@ -76,7 +79,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         music1 = music
     }
     private fun drawObstacles(){
-        barre1 = ObstacleMouvant(0F,200F,width/5.toFloat(),6*tailleJoueur,2F, width.toFloat())
+        barre1 = ObstacleMouvant(0F,200F,width/5.toFloat(),2*tailleJoueur,2F, width.toFloat())
         elements.add(barre1)
     }
     private fun drawPlayer(){
