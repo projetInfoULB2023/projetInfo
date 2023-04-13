@@ -14,11 +14,12 @@ import kotlin.collections.ArrayList
 import kotlin.math.abs
 
 //Etapes importantes
+//Trouver une bonne taille d'obstacles et la faire correspondre avec la position du joueur
+//Eventuellement penser à des pouvoirs (blocs à récupérer pour avoir une vie en plus,sauter plus loin, détruire un obstacle, ...)
 //Mort quand colision avec un obstacle
 //Image sur les obstacles
 //Génération automatique et aléatoire d'obstacles
 //Set up aléatoire d'obstacles au début, puis génération petit à petit.
-//
 
 class DrawingView @JvmOverloads constructor (context: Context, attributes: AttributeSet? = null, defStyleAttr: Int = 0): SurfaceView(context, attributes,defStyleAttr),
     SurfaceHolder.Callback,Runnable {
