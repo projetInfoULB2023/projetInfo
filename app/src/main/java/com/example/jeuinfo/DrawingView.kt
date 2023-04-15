@@ -71,9 +71,9 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         for(obs in elements){
             obs.avance(canvas)
         }
-        joueur.avance(canvas)
         joueur.detectSortieEcran()
         collisions()
+        joueur.avance(canvas)
     }
     private fun collisions(){
         for(obstacle in elements){
