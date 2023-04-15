@@ -77,6 +77,12 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     }
     private fun collisions(){
         for(obstacle in elements){
+            //Vérification uniquement si le joueur est sur la ligne de l'obstacle, sinon pas nécessaire
+            if(abs(obstacle.y1-joueur.y1)<tailleJoueur){
+                if(obstacle.r.intersect(joueur.r)){
+                    joueur.y1+=saut
+                }
+            }
         }
     }
 
@@ -87,7 +93,6 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private fun drawObstacles(){
         //Génération aléatoire d'obstacles pour 28/4 lignes
         for (i in 2..28 step 4){
-
             var r = random.nextInt(3)
             lateinit var obstacleTemp :Obstacle
             var larg:Float = 0F
@@ -176,14 +181,9 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                     if(y2-y1 > 0){
                         //Bas
                         joueur.y1 += saut
-                        //Detection collision basse
-
-
                     }else {
                         //Haut
                         joueur.y1 -= saut
-                        //Détection collision haute
-
                     }
                 }
             }
