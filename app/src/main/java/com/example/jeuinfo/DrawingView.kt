@@ -89,15 +89,14 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     }
 
     private fun drawObstacles(){
-        barre1 = ObstacleMouvant(0F,200F,width/5.toFloat(),2*tailleJoueur,2F, width.toFloat())
+        barre1 = ObstacleMouvant(0F,200F,width/5.toFloat()+200,2*tailleJoueur,2F, width.toFloat())
         elements.add(barre1)
     }
 
     private fun drawPlayer(){
         //alligne le joueur et les obstacles
         posJoueur= arrayOf(width/12*7F-tailleJoueur,height*7/8-reste)
-        joueur = Joueur((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),(posJoueur[0]+tailleJoueur).toFloat(),
-            (posJoueur[1]-tailleJoueur).toFloat(),width.toFloat(),height.toFloat(),tailleJoueur,music1)
+        joueur = Joueur((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),tailleJoueur*2,tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,music1)
     }
 
     fun pause(){
@@ -129,25 +128,21 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                     if(x2-x1 > 0){
                         //Droite
                         joueur.x1 += saut
-                        joueur.x2 +=saut
                     }else{
                         //Gauche
                         joueur.x1 -= saut
-                        joueur.x2 -= saut
                     }
                 }else{
                     //Mouvement vertical, reste à déterminer haut ou bas
                     if(y2-y1 > 0){
                         //Bas
                         joueur.y1 += saut
-                        joueur.y2 +=saut
                         //Detection collision basse
 
 
                     }else {
                         //Haut
                         joueur.y1 -= saut
-                        joueur.y2 -=saut
                         //Détection collision haute
 
                     }
