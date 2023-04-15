@@ -32,7 +32,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     lateinit var canvas:Canvas
     lateinit var thread:Thread
     private var tailleJoueur = width/24F
-    private var saut = tailleJoueur*2
+    private var saut = 0F
     private val blue = Color.BLUE
     private val red = Color.RED
     private lateinit var posJoueur:Array<Float>
@@ -41,8 +41,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private lateinit var barre1  : ObstacleMouvant
     private lateinit var joueur: Joueur
     private lateinit var music1 : MediaPlayer
-    private var reste = height*7/8 % tailleJoueur
-
+    private var reste = 0F
     //Entrée touche
     var x1=0F
     var x2=0F
@@ -67,6 +66,9 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         }
     }
     private fun setupVariables(){
+        tailleJoueur = width/24F
+        saut = tailleJoueur*2F
+        reste = height*7/8 % tailleJoueur
     }
     private fun tickGame(){
         for(obs in elements){
