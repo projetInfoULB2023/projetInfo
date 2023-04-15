@@ -77,7 +77,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     }
     private fun collisions(){
         for(obstacle in elements){
-            //Vérification uniquement si le joueur est sur la ligne de l'obstacle, sinon pas nécessaire
+            //Vérification uniquement si le joueur est sur la ligne de l'obstacle, sinon pas nécessaire => fait gagner en performance
             if(abs(obstacle.y1-joueur.y1)<tailleJoueur){
                 if(obstacle.r.intersect(joueur.r)){
                     joueur.y1+=saut
@@ -114,9 +114,10 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                     }
                 }
                 1 -> {
-                    //camion, reste à déterminer la couleur
+                    //camion
                     speed = 4F
                     larg=4F
+                    //Reste à déterminer la couleur
                     val y = random.nextInt(2)
                     when(y){
                         0->path=R.drawable.camion_bleu
