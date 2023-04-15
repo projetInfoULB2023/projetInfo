@@ -13,12 +13,8 @@ import kotlin.math.abs
 
 //Etapes importantes
 
-//Trouver une bonne taille d'obstacles et la faire correspondre avec la position du joueur
 //Eventuellement penser à des pouvoirs (blocs à récupérer pour avoir une vie en plus,sauter plus loin, détruire un obstacle, ...)
-//Mort quand collision avec un obstacle
 //Génération automatique et aléatoire d'obstacles
-//Set up aléatoire d'obstacles au début, puis génération petit à petit.
-//Redimensionner les images
 
 class DrawingView @JvmOverloads constructor (context: Context, attributes: AttributeSet? = null, defStyleAttr: Int = 0): SurfaceView(context, attributes,defStyleAttr),
     SurfaceHolder.Callback,Runnable {
@@ -44,6 +40,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     var x2=0F
     var y1=0F
     var y2=0F
+
     private fun draw(){
         if(holder.surface.isValid){
             canvas =holder.lockCanvas()
@@ -62,11 +59,13 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
             holder.unlockCanvasAndPost(canvas)
         }
     }
+
     private fun setupVariables(){
         tailleJoueur = width/24F
         saut = tailleJoueur*2F
         reste = height*7/8 % tailleJoueur
     }
+
     private fun tickGame(){
         for(obs in elements){
             obs.avance(canvas)
@@ -75,6 +74,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         collisions()
         joueur.avance(canvas)
     }
+
     private fun collisions(){
         for(obstacle in elements){
             //Vérification uniquement si le joueur est sur la ligne de l'obstacle, sinon pas nécessaire => fait gagner en performance
