@@ -16,9 +16,9 @@ import kotlin.math.abs
 //Trouver une bonne taille d'obstacles et la faire correspondre avec la position du joueur
 //Eventuellement penser à des pouvoirs (blocs à récupérer pour avoir une vie en plus,sauter plus loin, détruire un obstacle, ...)
 //Mort quand collision avec un obstacle
-//Image sur les obstacles
 //Génération automatique et aléatoire d'obstacles
 //Set up aléatoire d'obstacles au début, puis génération petit à petit.
+//Redimensionner les images
 
 class DrawingView @JvmOverloads constructor (context: Context, attributes: AttributeSet? = null, defStyleAttr: Int = 0): SurfaceView(context, attributes,defStyleAttr),
     SurfaceHolder.Callback,Runnable {
@@ -40,7 +40,6 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private lateinit var joueur: Joueur
     private lateinit var music1 : MediaPlayer
     private var reste = 0F
-    val testImage = BitmapFactory.decodeResource(resources,R.drawable.bus_scolaire)
     //Entrée touche
     var x1=0F
     var x2=0F
@@ -87,7 +86,8 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     }
 
     private fun drawObstacles(){
-        barre1 = ObstacleMouvant(0F,tailleJoueur*8,width/5.toFloat()+200,2*tailleJoueur,2F, width.toFloat(),testImage)
+        barre1 = ObstacleMouvant(0F,tailleJoueur*8,width/5.toFloat()+200,2*tailleJoueur,2F, width.toFloat(),
+            BitmapFactory.decodeResource(resources,R.drawable.camion_bleu))
         elements.add(barre1)
     }
 
@@ -95,7 +95,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         //alligne le joueur et les obstacles
         posJoueur= arrayOf(width/12*7F-tailleJoueur,height*7/8-reste)
         joueur = Joueur((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),tailleJoueur*2,
-            tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,music1,testImage)
+            tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,music1,BitmapFactory.decodeResource(resources,R.drawable.herbe))
     }
 
     fun pause(){
