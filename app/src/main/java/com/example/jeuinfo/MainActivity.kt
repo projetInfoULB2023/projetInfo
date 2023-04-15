@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
         val height = displayMetrics.heightPixels
         val width = displayMetrics.widthPixels
         val mediaPlayer : MediaPlayer = MediaPlayer.create(this, R.raw.mort)
+
         drawingView = binding.vMain
         drawingView.getMediaPlayer(mediaPlayer)
         drawingView.getDimensions(width,height)
