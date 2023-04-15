@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.RectF
 import android.media.MediaPlayer
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -76,7 +77,11 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         }
         joueur.avance(canvas)
         joueur.detectSortieEcran()
-        joueur.collision(elements)
+        collisions()
+    }
+    private fun collisions(){
+        for(obstacle in elements){
+        }
     }
 
     fun getMediaPlayer(music:MediaPlayer){
@@ -136,10 +141,15 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                         //Bas
                         joueur.y1 += saut
                         joueur.y2 +=saut
+                        //Detection collision basse
+
+
                     }else {
                         //Haut
                         joueur.y1 -= saut
                         joueur.y2 -=saut
+                        //Détection collision haute
+
                     }
                 }
             }

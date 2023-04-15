@@ -10,6 +10,7 @@ class ObstacleMouvant(x1:Float,y1:Float,x2:Float,y2:Float,vitesse:Float,width:Fl
     val width = width
     val vitesse = vitesse
     var dx = if(Random.nextFloat() > 0.5) 1 else -1
+
     override fun avance(canvas: Canvas) {
         //Mouvement horizontal en plus
         deplacement()
