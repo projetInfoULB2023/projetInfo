@@ -19,11 +19,16 @@ open class Element(x1:Float, y1:Float, x2:Float, y2:Float,color:Int) {
     var r = RectF(x1,x2,y1,y2)
     var dy= 1
 
+
+
     fun draw(canvas:Canvas){
         r = RectF(x1,y1,x2,y2)
         paint.color = color
         canvas?.drawRect(r,paint)
     }
+
+
+
     open fun avance(canvas:Canvas){
         r.offset(0F, dy*vitesseCam)
         y1+=vitesseCam

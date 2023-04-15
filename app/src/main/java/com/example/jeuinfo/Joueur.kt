@@ -9,11 +9,14 @@ class Joueur(x1:Float,y1:Float,x2:Float,y2:Float,width:Float,height:Float,taille
     private val taillejoueur= taillejoueur
     private val height = height
     private val deadSound = deadSound
-    fun detectSortieEcran(){
-        if(this.x2 > width){
+
+
+
+    fun detectSortieEcran() {
+        if(this.x2 > width) {
             this.x2 = width
             this.x1 = width-taillejoueur.toFloat()*2
-        }else if (this.x1 < 0){
+        } else if (this.x1 < 0) {
             this.x1 = 0F
             this.x2 = taillejoueur.toFloat()*2
         }
@@ -23,9 +26,12 @@ class Joueur(x1:Float,y1:Float,x2:Float,y2:Float,width:Float,height:Float,taille
             deadSound.start()
         }
     }
-    fun collision(obstacles:ArrayList<Element>){
-        for (obstacle in obstacles){
-            if (RectF.intersects(obstacle.r,this.r)){
+
+
+
+    fun collision(obstacles:ArrayList<Element>) {
+        for (obstacle in obstacles) {
+            if (RectF.intersects(obstacle.r,this.r)) {
 
             }
         }

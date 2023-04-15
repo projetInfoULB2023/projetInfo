@@ -26,10 +26,16 @@ class MainActivity : AppCompatActivity() {
         drawingView.setWillNotDraw(false)
         drawingView.invalidate()
     }
+
+
+
     override fun onPause() {
         super.onPause()
         drawingView.pause()
     }
+
+
+
     override fun onResume() {
         super.onResume()
         drawingView.resume()
