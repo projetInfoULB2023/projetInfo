@@ -8,7 +8,7 @@ open class Element(x1:Float, y1:Float, largeur:Float,hauteur:Float,color:Int,ima
     private val random = Random()
     private val paint = Paint()
     private val vitesseCam = 0.5F
-    private val image = image
+    var image = image
     var color = color
     var x1: Float= x1
     var y1: Float= y1
@@ -20,8 +20,7 @@ open class Element(x1:Float, y1:Float, largeur:Float,hauteur:Float,color:Int,ima
     open fun draw(canvas:Canvas){
         this.r = RectF(x1,y1,x1+largeur,y1+hauteur)
         paint.color = this.color
-        canvas?.drawRect(this.r,paint)
-        canvas?.drawBitmap(image,x1,y1,paint)
+        canvas?.drawBitmap(image,null , Rect(x1.toInt(),y1.toInt(),(x1+largeur).toInt(),(y1+hauteur).toInt()),paint)
     }
 
     open fun avance(canvas:Canvas){

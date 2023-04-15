@@ -36,7 +36,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private lateinit var posJoueur:Array<Float>
     private var setup = false
     private  var elements = ArrayList<Element>()
-    private lateinit var barre1  : ObstacleMouvant
+    private lateinit var barre1  : Obstacle
     private lateinit var joueur: Joueur
     private lateinit var music1 : MediaPlayer
     private var reste = 0F
@@ -86,7 +86,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     }
 
     private fun drawObstacles(){
-        barre1 = ObstacleMouvant(0F,tailleJoueur*8,width/5.toFloat()+200,2*tailleJoueur,2F, width.toFloat(),
+        barre1 = Obstacle(0F,tailleJoueur*8,width/5.toFloat()+200,2*tailleJoueur,2F, width.toFloat(),
             BitmapFactory.decodeResource(resources,R.drawable.camion_bleu))
         elements.add(barre1)
     }
@@ -95,7 +95,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         //alligne le joueur et les obstacles
         posJoueur= arrayOf(width/12*7F-tailleJoueur,height*7/8-reste)
         joueur = Joueur((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),tailleJoueur*2,
-            tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,music1,BitmapFactory.decodeResource(resources,R.drawable.herbe))
+            tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,music1,BitmapFactory.decodeResource(resources,R.drawable.bersini))
     }
 
     fun pause(){
