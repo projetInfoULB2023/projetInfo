@@ -1,12 +1,18 @@
 package com.example.jeuinfo
 
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.RectF
+import android.graphics.*
 import kotlin.random.Random
 
-class ObstacleMouvant(x1:Float,y1:Float,largeur:Float,hauteur:Float,vitesse:Float,width:Float) : Element(x1,y1,largeur,hauteur,
-    Color.GREEN) {
+class ObstacleMouvant(
+    x1:Float,
+    y1:Float,
+    largeur:Float,
+    hauteur:Float,
+    vitesse:Float,
+    width:Float,
+    image: Bitmap
+) : Element(x1,y1,largeur,hauteur,
+    Color.GREEN,image) {
     val width = width
     val vitesse = vitesse
     var dx = if(Random.nextFloat() > 0.5) 1 else -1

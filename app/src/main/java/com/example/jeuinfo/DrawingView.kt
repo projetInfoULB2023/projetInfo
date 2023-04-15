@@ -1,10 +1,7 @@
 package com.example.jeuinfo
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.RectF
+import android.graphics.*
 import android.media.MediaPlayer
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -43,6 +40,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private lateinit var joueur: Joueur
     private lateinit var music1 : MediaPlayer
     private var reste = 0F
+    val testImage = BitmapFactory.decodeResource(resources,R.drawable.bus_scolaire)
     //Entrée touche
     var x1=0F
     var x2=0F
@@ -89,14 +87,15 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     }
 
     private fun drawObstacles(){
-        barre1 = ObstacleMouvant(0F,200F,width/5.toFloat()+200,2*tailleJoueur,2F, width.toFloat())
+        barre1 = ObstacleMouvant(0F,tailleJoueur*8,width/5.toFloat()+200,2*tailleJoueur,2F, width.toFloat(),testImage)
         elements.add(barre1)
     }
 
     private fun drawPlayer(){
         //alligne le joueur et les obstacles
         posJoueur= arrayOf(width/12*7F-tailleJoueur,height*7/8-reste)
-        joueur = Joueur((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),tailleJoueur*2,tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,music1)
+        joueur = Joueur((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),tailleJoueur*2,
+            tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,music1,testImage)
     }
 
     fun pause(){
