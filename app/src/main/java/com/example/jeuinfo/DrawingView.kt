@@ -36,7 +36,6 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private lateinit var posJoueur:Array<Float>
     private var setup = false
     private  var elements = ArrayList<Element>()
-    private lateinit var barre1  : Obstacle
     private lateinit var joueur: Joueur
     private lateinit var music1 : MediaPlayer
     private var reste = 0F
@@ -86,9 +85,50 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     }
 
     private fun drawObstacles(){
-        barre1 = Obstacle(0F,tailleJoueur*8,width/5.toFloat()+200,2*tailleJoueur,2F, width.toFloat(),
-            BitmapFactory.decodeResource(resources,R.drawable.camion_bleu))
-        elements.add(barre1)
+        //Génération aléatoire d'obstacles pour 28/4 lignes
+        for (i in 2..28 step 4){
+
+            var r = random.nextInt(3)
+            lateinit var obstacleTemp :Obstacle
+            var larg:Float = 0F
+            var speed:Float = 0F
+            var path = 0
+            when(r){
+                0 -> {
+                    //voiture
+                    speed = 5F
+                    larg = 2F
+                    //Détermination couleur
+                    val y = random.nextInt(5)
+                    when(y){
+                        0->path=R.drawable.voiture_bleu
+                        1->path=R.drawable.voiture_grise
+                        2->path=R.drawable.voiture_jaune
+                        3->path=R.drawable.voiture_orange
+                        4->path=R.drawable.voiture_rouge
+                    }
+                }
+                1 -> {
+                    //camion, reste à déterminer la couleur
+                    speed = 4F
+                    larg=4F
+                    val y = random.nextInt(2)
+                    when(y){
+                        0->path=R.drawable.camion_bleu
+                        1->path=R.drawable.camion_rouge
+                    }
+                }
+                2 -> {
+                    //bus scolaire, rien d'autre à déterminer
+                    speed = 3F
+                    larg=5F
+                    path=R.drawable.bus_scolaire
+                }
+            }
+            obstacleTemp = Obstacle(random.nextFloat()*width,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed,
+                width.toFloat(),BitmapFactory.decodeResource(resources,path))
+            elements.add(obstacleTemp)
+        }
     }
 
     private fun drawPlayer(){
