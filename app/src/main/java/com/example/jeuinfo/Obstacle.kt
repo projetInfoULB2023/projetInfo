@@ -11,8 +11,7 @@ class Obstacle(
     vitesse:Float,
     width:Float,
     image: Bitmap
-) : Element(x1,y1,largeur,hauteur,
-    Color.GREEN,image) {
+) : Element(x1,y1,largeur,hauteur, image) {
 
     val width = width
     val vitesse = vitesse
