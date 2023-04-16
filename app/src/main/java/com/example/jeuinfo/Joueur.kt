@@ -8,7 +8,7 @@ import android.media.MediaPlayer
 
 class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,width:Float,height:Float,
              taillejoueur:Float,deadSound:MediaPlayer,image:Bitmap)
-    : Element(x1,y1,largeur,hauteur,Color.BLUE,image) {
+    : Element(x1,y1,largeur,hauteur,image) {
     private val width = width
     private val taillejoueur= taillejoueur
     private val height = height
