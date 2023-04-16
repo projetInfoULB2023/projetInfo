@@ -42,6 +42,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private var reste = 0F
     private val routeImage = BitmapFactory.decodeResource(resources,R.drawable.route)
     private val herbeImage = BitmapFactory.decodeResource(resources,R.drawable.herbe)
+    private val nbreRocher = 4
 
     //Entrée touche
     var x1=0F
@@ -158,7 +159,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         }
 
         for (i in 4..36 step 4) {
-            val x = random.nextInt(4)
+            val x = random.nextInt(nbreRocher)
             for (j in 0..x) {
                 lateinit var obstacleTemp2: Obstacle
                 var larg2 = 0F
@@ -178,7 +179,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                     3 -> path2 = R.drawable.caillou_palmier
                 }
                 obstacleTemp2 = Obstacle(
-                    (random.nextInt(11) * width).toFloat(),
+                    (random.nextInt(12) * tailleJoueur * 2).toFloat(),
                     i * tailleJoueur,
                     tailleJoueur * larg2,
                     tailleJoueur * 2,
