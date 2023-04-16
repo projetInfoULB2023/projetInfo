@@ -126,6 +126,8 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 }
                 1 -> {
                     //camion
+                    val route = Obstacle(0F,i*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
+                    decor.add(route)
                     speed = 4F
                     larg=4F
                     //Reste à déterminer la couleur
@@ -137,6 +139,8 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 }
                 2 -> {
                     //bus scolaire, rien d'autre à déterminer
+                    val route = Obstacle(0F,i*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
+                    decor.add(route)
                     speed = 3F
                     larg=5F
                     path=R.drawable.bus_scolaire
