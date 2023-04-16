@@ -110,6 +110,8 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
             when(r){
                 0 -> {
                     //voiture
+                    val herbe = Obstacle(0F,(i+2)*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,herbeImage)
+                    decor.add(herbe)
                     val route = Obstacle(0F,i*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
                     decor.add(route)
                     speed = 5F
@@ -126,6 +128,8 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 }
                 1 -> {
                     //camion
+                    val herbe = Obstacle(0F,(i+2)*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,herbeImage)
+                    decor.add(herbe)
                     val route = Obstacle(0F,i*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
                     decor.add(route)
                     speed = 4F
@@ -139,14 +143,13 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 }
                 2 -> {
                     //bus scolaire, rien d'autre à déterminer
+                    val herbe = Obstacle(0F,(i+2)*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,herbeImage)
+                    decor.add(herbe)
                     val route = Obstacle(0F,i*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
                     decor.add(route)
                     speed = 3F
                     larg=5F
                     path=R.drawable.bus_scolaire
-                }
-                3 -> {
-                    //Cailloux
                 }
             }
             obstacleTemp = Obstacle(random.nextFloat()*width,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed,
