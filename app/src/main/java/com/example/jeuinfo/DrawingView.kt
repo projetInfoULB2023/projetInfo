@@ -102,7 +102,8 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
             }
             counter+=1
         }
-        if(decor[decor.size-1].y1 > height){
+        println(height)
+        if(decor[decor.size-1].y1 >= height){
             decor.removeAt(decor.size-1)
             println(decor.size)
         }
