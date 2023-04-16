@@ -93,11 +93,90 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 //Manipulation pour mettre la nouvelle herbe en première position
                 decor.add(decor[0])
                 decor[0] = herbe
+
+                //Générations des cailloux
+                //Génération cailloux
+                val x = random.nextInt(3)
+                var list = mutableListOf(0,1,2,3,4,5,6,7,8,9,10,11)
+                for (j in 0..x) {
+                    val index = random.nextInt(list.size)
+                    val location = list[index]
+                    list.remove(location)
+                    lateinit var obstacleTemp: ObstacleFixe
+                    var path = 0
+
+                    //Rocher
+                    val speed = 0F
+                    val larg = 2F
+
+                    //Détermination type
+                    val y = random.nextInt(4)
+                    when (y) {
+                        0 -> path = R.drawable.caillou_arbre
+                        1 -> path = R.drawable.caillou_buisson
+                        2 -> path = R.drawable.caillou_fougere
+                        3 -> path = R.drawable.caillou_palmier
+                    }
+                    obstacleTemp = ObstacleFixe(
+                        (location * tailleJoueur*2),
+                        -2 * tailleJoueur,
+                        tailleJoueur * larg,
+                        tailleJoueur * 2,
+                        width.toFloat(),
+                        BitmapFactory.decodeResource(resources, path)
+                    )
+                    elements.add(obstacleTemp)
+                }
+
             }else{
                 //On génère une ligne de route
                 val route = Obstacle(0F,-2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
                 decor.add(decor[0])
                 decor[0] = route
+
+                //Génération de véhicules
+                var r = random.nextInt(3)
+                lateinit var obstacleTemp :Obstacle
+                var larg = 0F
+                var speed = 0F
+                var path = 0
+                when(r){
+                    0 -> {
+                        //voiture
+                        speed = 5F
+                        larg = 2F
+                        //Détermination couleur
+                        val y = random.nextInt(5)
+                        when(y){
+                            0->path=R.drawable.voiture_bleu
+                            1->path=R.drawable.voiture_grise
+                            2->path=R.drawable.voiture_jaune
+                            3->path=R.drawable.voiture_orange
+                            4->path=R.drawable.voiture_rouge
+                        }
+                    }
+                    1 -> {
+                        //camion
+                        speed = 4F
+                        larg=4F
+                        //Reste à déterminer la couleur
+                        val y = random.nextInt(2)
+                        when(y){
+                            0->path=R.drawable.camion_bleu
+                            1->path=R.drawable.camion_rouge
+                        }
+                    }
+                    2 -> {
+                        //bus scolaire, rien d'autre à déterminer
+                        speed = 3F
+                        larg=5F
+                        path=R.drawable.bus_scolaire
+                    }
+                }
+
+                obstacleTemp = Obstacle(random.nextFloat()*width,-2*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed,
+                    width.toFloat(),BitmapFactory.decodeResource(resources,path))
+                elements.add(obstacleTemp)
             }
             counter+=1
         }
