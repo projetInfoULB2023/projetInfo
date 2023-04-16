@@ -75,6 +75,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     }
 
     private fun tickGame(){
+        for(obs in decor) obs.avance(canvas)
         for(obs in elements){
             obs.avance(canvas)
         }
@@ -101,7 +102,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private fun drawObstacles(){
         //Génération aléatoire d'obstacles pour 28/4 lignes
         for (i in 2..32 step 4){
-            var r = random.nextInt(4)
+            var r = random.nextInt(3)
             lateinit var obstacleTemp :Obstacle
             var larg = 0F
             var speed = 0F
@@ -142,7 +143,6 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 }
                 3 -> {
                     //Cailloux
-
                 }
             }
             obstacleTemp = Obstacle(random.nextFloat()*width,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed,
