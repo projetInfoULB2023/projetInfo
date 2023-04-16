@@ -41,7 +41,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private var reste = 0F
     private val routeImage = BitmapFactory.decodeResource(resources,R.drawable.route)
     private val herbeImage = BitmapFactory.decodeResource(resources,R.drawable.herbe)
-
+    private var counter =0
     //Entrée touche
     var x1=0F
     var x2=0F
@@ -74,26 +74,42 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     }
 
     private fun tickGame(){
+        autoGen()
         for(obs in decor) obs.avance(canvas)
         for(obs in elements) obs.avance(canvas)
         joueur.collision(elements,direction,saut)
         joueur.detectSortieEcran()
         joueur.avance(canvas)
     }
+    fun autoGen(){
+        //Analyse la position en y du premier élément pour déterminer quand générer la suite
+        if(elements[0].y1 > -tailleJoueur){
+            //On génère une nouvelle ligne
+            if(counter%2 == 0){
+                //On génère une ligne d'herbe
+                val herbe = Obstacle(0F,-2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,herbeImage)
+                //Manipulation pour échanger mettre la nouvelle herbe en première position
 
+
+            }else{
+                //On génère une ligne de route
+
+
+            }
+        }
+    }
     fun getMediaPlayer(music:MediaPlayer){
         music1 = music
     }
 
     private fun drawObstacles(){
         //Génération aléatoire d'obstacles pour 32/4 lignes
-        for (i in 2..32 step 4){
+        for (i in -2..34 step 4){
             var r = random.nextInt(3)
             lateinit var obstacleTemp :Obstacle
             var larg = 0F
             var speed = 0F
             var path = 0
-
             when(r){
                 0 -> {
                     //voiture
