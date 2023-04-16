@@ -12,10 +12,9 @@ open class Obstacle(
     width:Float,
     image: Bitmap
 ) : Element(x1,y1,largeur,hauteur, image) {
-
     val width = width
     val vitesse = vitesse
-    var dx = if(Random.nextFloat() > 0.5) 1 else -1
+    open var dx = if(Random.nextFloat() > 0.5) 1 else -1
     var imageSetup = false
 
     private fun setupImage(){
@@ -27,7 +26,7 @@ open class Obstacle(
         imageSetup=true
     }
 
-    private fun deplacement(){
+    open fun deplacement(){
         //Permet le rebond
 
         //dx = if(this.x1+largeur >= width ) -1 else if (this.x1 <= 0) 1 else dx

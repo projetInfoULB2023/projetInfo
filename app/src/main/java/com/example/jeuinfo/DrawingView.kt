@@ -100,13 +100,14 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     }
 
     private fun drawObstacles(){
-        //Génération aléatoire d'obstacles pour 28/4 lignes
+        //Génération aléatoire d'obstacles pour 32/4 lignes
         for (i in 2..32 step 4){
             var r = random.nextInt(3)
             lateinit var obstacleTemp :Obstacle
             var larg = 0F
             var speed = 0F
             var path = 0
+
             when(r){
                 0 -> {
                     //voiture
@@ -152,13 +153,13 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                     path=R.drawable.bus_scolaire
                 }
             }
+
             obstacleTemp = Obstacle(random.nextFloat()*width,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed,
                 width.toFloat(),BitmapFactory.decodeResource(resources,path))
             elements.add(obstacleTemp)
-        }
-        //Génération cailloux
-        for (i in 4..32 step 4) {
-            val x = random.nextInt(4)
+
+            //Génération cailloux
+            val x = random.nextInt(3)
             for (j in 0..x) {
                 lateinit var obstacleTemp: ObstacleFixe
                 var path = 0
@@ -177,7 +178,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 }
                 obstacleTemp = ObstacleFixe(
                     (random.nextInt(12) * tailleJoueur*2).toFloat(),
-                    i * tailleJoueur,
+                    (i+2) * tailleJoueur,
                     tailleJoueur * larg,
                     tailleJoueur * 2,
                     width.toFloat(),
@@ -185,6 +186,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 )
                 elements.add(obstacleTemp)
             }
+
         }
     }
 
