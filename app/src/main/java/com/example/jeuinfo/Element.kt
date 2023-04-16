@@ -1,7 +1,6 @@
 package com.example.jeuinfo
 
 import android.graphics.*
-import java.util.*
 
 
 open class Element(x1:Float, y1:Float, largeur:Float,hauteur:Float,image:Bitmap) {

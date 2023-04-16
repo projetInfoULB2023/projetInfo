@@ -30,14 +30,19 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     lateinit var thread:Thread
     private var tailleJoueur = width/24F
     private var saut = 0F
+    private var paint = Paint()
     private val blue = Color.BLUE
     private val red = Color.RED
     private lateinit var posJoueur:Array<Float>
     private var setup = false
-    private  var elements = ArrayList<Element>()
+    private var elements = ArrayList<Element>()
+    private var decor = ArrayList<Element>()
     private lateinit var joueur: Joueur
     private lateinit var music1 : MediaPlayer
     private var reste = 0F
+    private val routeImage = BitmapFactory.decodeResource(resources,R.drawable.route)
+    private val herbeImage = BitmapFactory.decodeResource(resources,R.drawable.herbe)
+
     //Entrée touche
     var x1=0F
     var x2=0F
@@ -95,15 +100,17 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
 
     private fun drawObstacles(){
         //Génération aléatoire d'obstacles pour 28/4 lignes
-        for (i in 2..28 step 4){
-            var r = random.nextInt(3)
+        for (i in 2..32 step 4){
+            var r = random.nextInt(4)
             lateinit var obstacleTemp :Obstacle
-            var larg:Float = 0F
-            var speed:Float = 0F
+            var larg = 0F
+            var speed = 0F
             var path = 0
             when(r){
                 0 -> {
                     //voiture
+                    val route = Obstacle(0F,i*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
+                    decor.add(route)
                     speed = 5F
                     larg = 2F
                     //Détermination couleur
@@ -132,6 +139,10 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                     speed = 3F
                     larg=5F
                     path=R.drawable.bus_scolaire
+                }
+                3 -> {
+                    //Cailloux
+
                 }
             }
             obstacleTemp = Obstacle(random.nextFloat()*width,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed,
