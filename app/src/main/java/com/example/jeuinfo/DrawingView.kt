@@ -134,6 +134,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                     path=R.drawable.bus_scolaire
                 }
             }
+
             obstacleTemp = Obstacle(random.nextFloat()*width,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed,
                 width.toFloat(),BitmapFactory.decodeResource(resources,path))
             elements.add(obstacleTemp)

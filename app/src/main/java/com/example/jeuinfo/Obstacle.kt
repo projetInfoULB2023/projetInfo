@@ -26,6 +26,9 @@ class Obstacle(
         }
         imageSetup=true
     }
+
+
+
     fun deplacement(){
         //Permet le rebond
 
@@ -44,6 +47,9 @@ class Obstacle(
         this.r.offset(dx*vitesse,0F)
         this.x1 +=dx*vitesse
     }
+
+
+
     override fun avance(canvas: Canvas) {
         //Mouvement horizontal en plus
         if(!imageSetup) setupImage()
