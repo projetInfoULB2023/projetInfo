@@ -28,6 +28,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private var drawing = true
     lateinit var canvas:Canvas
     lateinit var thread:Thread
+    private var direction = 0
     private var tailleJoueur = width/24F
     private var saut = 0F
     private var paint = Paint()
@@ -77,28 +78,9 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private fun tickGame(){
         for(obs in decor) obs.avance(canvas)
         for(obs in elements) obs.avance(canvas)
+        joueur.collision(elements,direction,saut)
         joueur.detectSortieEcran()
         joueur.avance(canvas)
-    }
-
-    private fun collisions(direction:Int){
-        for(obstacle in elements){
-            //Vérification uniquement si le joueur est sur la ligne de l'obstacle, sinon pas nécessaire => fait gagner en performance
-            if(abs(obstacle.y1-joueur.y1)< tailleJoueur){
-                if(obstacle.r.intersect(joueur.r)){
-                    if(obstacle is ObstacleFixe){
-                        println("collision !!!")
-                        //0, haut. 1, bas. 2, gauche.3, droite
-                        when(direction){
-                            0 -> joueur.y1 +=saut
-                            1 -> joueur.y1 -= saut
-                            2 -> joueur.x1 += saut
-                            3 -> joueur.x1 -= saut
-                        }
-                    }
-                }
-            }
-        }
     }
 
     fun getMediaPlayer(music:MediaPlayer){
@@ -166,7 +148,11 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
 
             //Génération cailloux
             val x = random.nextInt(3)
+            var list = mutableListOf(0,1,2,3,4,5,6,7,8,9,10,11)
             for (j in 0..x) {
+                val index = random.nextInt(list.size)
+                val location = list[index]
+                list.remove(location)
                 lateinit var obstacleTemp: ObstacleFixe
                 var path = 0
 
@@ -183,7 +169,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                     3 -> path = R.drawable.caillou_palmier
                 }
                 obstacleTemp = ObstacleFixe(
-                    (random.nextInt(12) * tailleJoueur*2).toFloat(),
+                    (location * tailleJoueur*2),
                     (i+2) * tailleJoueur,
                     tailleJoueur * larg,
                     tailleJoueur * 2,
@@ -220,7 +206,6 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
 
     override fun onTouchEvent(e: MotionEvent): Boolean {
         //S'active quand l'écran est touché
-        //println("$deviceWidth, $deviceHeight, $width, $height")
         when(e.action){
             MotionEvent.ACTION_DOWN ->{ x1 = e.rawX; y1=e.rawY}
             MotionEvent.ACTION_UP -> {
@@ -231,28 +216,26 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                     if(x2-x1 > 0){
                         //Droite
                         joueur.x1 += saut
-                        collisions(3)
+                        direction=3
                     }else{
                         //Gauche
                         joueur.x1 -= saut
-                        collisions(2)
+                        direction=2
                     }
                 }else{
                     //Mouvement vertical, reste à déterminer haut ou bas
                     if(y2-y1 > 0){
                         //Bas
                         joueur.y1 += saut
-                        collisions(1)
+                        direction=1
                     }else {
                         //Haut
                         joueur.y1 -= saut
-                        collisions(0)
+                        direction=0
                     }
                 }
             }
         }
-        //invalidate permet de dessiner ce qui a été changé
-        invalidate()
         return true
     }
 

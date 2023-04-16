@@ -13,7 +13,7 @@ open class Element(x1:Float, y1:Float, largeur:Float,hauteur:Float,image:Bitmap)
     var hauteur : Float = hauteur
     var r = RectF(x1,x1+largeur,y1,y1 + hauteur)
     var dy= 1
-    private val marge =3
+    val marge =3
 
     open fun draw(canvas:Canvas){
         this.r = RectF(x1+marge,y1+marge,x1+largeur-marge,y1+hauteur-marge)

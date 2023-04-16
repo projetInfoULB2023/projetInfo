@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.RectF
 import android.media.MediaPlayer
+import kotlin.math.abs
 
 class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,width:Float,height:Float,
              taillejoueur:Float,deadSound:MediaPlayer,image:Bitmap)
@@ -24,5 +25,24 @@ class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,width:Float,height:Fl
             deadSound.start()
         }
     }
+    fun collision(elements:ArrayList<Element>,direction:Int,saut:Float){
+        this.r= RectF(x1+marge,y1+marge,x1+largeur-marge,y1+hauteur-marge)
+        for(obstacle in elements){
+            //Vérification uniquement si le joueur est sur la ligne de l'obstacle, sinon pas nécessaire => fait gagner en performance
+            if(abs(obstacle.y1-this.y1) < taillejoueur){
+                if(obstacle.r.intersect(this.r)){
+                    if(obstacle is ObstacleFixe){
+                        //0, haut. 1, bas. 2, gauche.3, droite
+                        when(direction){
+                            0 -> this.y1 += saut
+                            1 -> this.y1 -= saut
+                            2 -> this.x1 += saut
+                            3 -> this.x1 -= saut
+                        }
+                    }
+                }
+            }
+        }
 
+    }
 }
