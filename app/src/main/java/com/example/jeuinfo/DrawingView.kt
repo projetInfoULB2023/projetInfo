@@ -39,8 +39,8 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private lateinit var joueur: Joueur
     private lateinit var music1 : MediaPlayer
     private var reste = 0F
-    private val routeImage = BitmapFactory.decodeResource(resources,R.drawable.route)
-    private val herbeImage = BitmapFactory.decodeResource(resources,R.drawable.herbe)
+    private var routeImage = BitmapFactory.decodeResource(resources,R.drawable.route)
+    private var herbeImage = BitmapFactory.decodeResource(resources,R.drawable.herbe)
     private var counter =0
     //Entrée touche
     var x1=0F
@@ -71,6 +71,8 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         tailleJoueur = width/24F
         saut = tailleJoueur*2F
         reste = height*7/8 % tailleJoueur
+        routeImage=Bitmap.createScaledBitmap(routeImage,width,tailleJoueur.toInt()*2,false)
+        herbeImage=Bitmap.createScaledBitmap(herbeImage,width,tailleJoueur.toInt()*2,false)
     }
 
     private fun tickGame(){
@@ -83,19 +85,20 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     }
     fun autoGen(){
         //Analyse la position en y du premier élément pour déterminer quand générer la suite
-        if(elements[0].y1 > -tailleJoueur){
+        if(decor[0].y1> -tailleJoueur){
             //On génère une nouvelle ligne
             if(counter%2 == 0){
                 //On génère une ligne d'herbe
-                val herbe = Obstacle(0F,-2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,herbeImage)
-                //Manipulation pour échanger mettre la nouvelle herbe en première position
-
-
+                val herbe = Obstacle(0F,-5/2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,herbeImage)
+                //Manipulation pour mettre la nouvelle herbe en première position
+                decor.add(decor[0])
+                decor[0] = herbe
             }else{
                 //On génère une ligne de route
 
 
             }
+            counter+=1
         }
     }
     fun getMediaPlayer(music:MediaPlayer){
