@@ -1,5 +1,6 @@
 package com.example.jeuinfo
 
+import android.app.AlertDialog
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.provider.MediaStore.Audio.Media
@@ -9,6 +10,8 @@ import com.example.jeuinfo.databinding.ActivityMainBinding
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import kotlin.system.exitProcess
+
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,9 +41,24 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.about -> Toast.makeText(this, "About Selected", Toast.LENGTH_SHORT).show()
-            R.id.settings -> Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show()
-            R.id.exit -> Toast.makeText(this, "Exit Selected", Toast.LENGTH_SHORT).show()
+            R.id.about -> {
+                Toast.makeText(this, "About Selected", Toast.LENGTH_SHORT).show()
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle("About")
+                builder.setMessage("An app brought to you by Poly polyp inc.")
+                builder.setNeutralButton("return") {
+                    dialogInterface, which -> Toast.makeText(applicationContext, "clicked return", Toast.LENGTH_LONG).show()
+                }
+                val alertDialog: AlertDialog = builder.create()
+                alertDialog.show()
+            }
+            R.id.settings -> {
+                Toast.makeText(this, "Settings Selected", Toast.LENGTH_SHORT).show()
+            }
+            R.id.exit -> {
+                Toast.makeText(this, "Exit Selected", Toast.LENGTH_SHORT).show()
+                exitProcess(0)
+            }
         }
         return super.onOptionsItemSelected(item)
     }
