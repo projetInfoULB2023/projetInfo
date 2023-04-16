@@ -16,8 +16,6 @@ import kotlin.math.abs
 //Eventuellement penser à des pouvoirs (blocs à récupérer pour avoir une vie en plus,sauter plus loin, détruire un obstacle, ...)
 //Génération automatique et aléatoire d'obstacles
 //Ajout différents personnages
-//Ajouter la route
-//Set up aléatoire de cailloux, ...
 
 class DrawingView @JvmOverloads constructor (context: Context, attributes: AttributeSet? = null, defStyleAttr: Int = 0): SurfaceView(context, attributes,defStyleAttr),
     SurfaceHolder.Callback,Runnable {
