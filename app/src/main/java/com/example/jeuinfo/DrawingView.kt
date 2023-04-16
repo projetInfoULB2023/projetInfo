@@ -30,14 +30,19 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     lateinit var thread:Thread
     private var tailleJoueur = width/24F
     private var saut = 0F
+    private var paint = Paint()
     private val blue = Color.BLUE
     private val red = Color.RED
     private lateinit var posJoueur:Array<Float>
     private var setup = false
-    private  var elements = ArrayList<Element>()
+    private var elements = ArrayList<Element>()
+    private var decor = ArrayList<Element>()
     private lateinit var joueur: Joueur
     private lateinit var music1 : MediaPlayer
     private var reste = 0F
+    private val routeImage = BitmapFactory.decodeResource(resources,R.drawable.route)
+    private val herbeImage = BitmapFactory.decodeResource(resources,R.drawable.herbe)
+
     //Entrée touche
     var x1=0F
     var x2=0F
@@ -95,92 +100,54 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
 
     private fun drawObstacles(){
         //Génération aléatoire d'obstacles pour 28/4 lignes
-        for (i in 2..28 step 4){
-            var r = random.nextInt(3)
-            lateinit var obstacleTemp2 :Obstacle
-            var larg2:Float = 0F
-            var speed2:Float = 0F
-            var path2 = 0
+        for (i in 2..32 step 4){
+            var r = random.nextInt(4)
+            lateinit var obstacleTemp :Obstacle
+            var larg = 0F
+            var speed = 0F
+            var path = 0
             when(r){
                 0 -> {
                     //voiture
-                    speed2 = 5F
-                    larg2 = 2F
+                    val route = Obstacle(0F,i*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
+                    decor.add(route)
+                    speed = 5F
+                    larg = 2F
                     //Détermination couleur
                     val y = random.nextInt(5)
                     when(y){
-                        0->path2=R.drawable.voiture_bleu
-                        1->path2=R.drawable.voiture_grise
-                        2->path2=R.drawable.voiture_jaune
-                        3->path2=R.drawable.voiture_orange
-                        4->path2=R.drawable.voiture_rouge
+                        0->path=R.drawable.voiture_bleu
+                        1->path=R.drawable.voiture_grise
+                        2->path=R.drawable.voiture_jaune
+                        3->path=R.drawable.voiture_orange
+                        4->path=R.drawable.voiture_rouge
                     }
                 }
                 1 -> {
                     //camion
-                    speed2 = 4F
-                    larg2=4F
+                    speed = 4F
+                    larg=4F
                     //Reste à déterminer la couleur
                     val y = random.nextInt(2)
                     when(y){
-                        0->path2=R.drawable.camion_bleu
-                        1->path2=R.drawable.camion_rouge
+                        0->path=R.drawable.camion_bleu
+                        1->path=R.drawable.camion_rouge
                     }
                 }
                 2 -> {
                     //bus scolaire, rien d'autre à déterminer
-                    speed2 = 3F
-                    larg2=5F
-                    path2=R.drawable.bus_scolaire
+                    speed = 3F
+                    larg=5F
+                    path=R.drawable.bus_scolaire
+                }
+                3 -> {
+                    //Cailloux
+
                 }
             }
-
-            for (i in 4..30 step 4){
-                var r = random.nextInt(3)
-                lateinit var obstacleTemp :Obstacle
-                var larg:Float = 0F
-                var speed:Float = 0F
-                var path = 0
-                when(r){
-                    0 -> {
-                        //voiture
-                        speed = 5F
-                        larg = 2F
-                        //Détermination couleur
-                        val y = random.nextInt(5)
-                        when(y){
-                            0->path=R.drawable.voiture_bleu
-                            1->path=R.drawable.voiture_grise
-                            2->path=R.drawable.voiture_jaune
-                            3->path=R.drawable.voiture_orange
-                            4->path=R.drawable.voiture_rouge
-                        }
-                    }
-                    1 -> {
-                        //camion
-                        speed = 4F
-                        larg=4F
-                        //Reste à déterminer la couleur
-                        val y = random.nextInt(2)
-                        when(y){
-                            0->path=R.drawable.camion_bleu
-                            1->path=R.drawable.camion_rouge
-                        }
-                    }
-                    2 -> {
-                        //bus scolaire, rien d'autre à déterminer
-                        speed = 3F
-                        larg=5F
-                        path=R.drawable.bus_scolaire
-                    }
-                }
-
             obstacleTemp = Obstacle(random.nextFloat()*width,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed,
                 width.toFloat(),BitmapFactory.decodeResource(resources,path))
             elements.add(obstacleTemp)
-            obstacleTemp = Obstacle(random.nextFloat()*width,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed,
-                width.toFloat(),BitmapFactory.decodeResource(resources,path))
-
         }
     }
 
