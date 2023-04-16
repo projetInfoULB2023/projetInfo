@@ -157,27 +157,37 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
             elements.add(obstacleTemp)
         }
 
-        for (i in 4..36 step 4){
-            lateinit var obstacleTemp2 :Obstacle
-            var larg2 = 0F
-            var speed2 = 0F
-            var path2 = 0
+        for (i in 4..36 step 4) {
+            val x = random.nextInt(4)
+            for (j in 0..x) {
+                lateinit var obstacleTemp2: Obstacle
+                var larg2 = 0F
+                var speed2 = 0F
+                var path2 = 0
 
-            //Rocher
-            speed2 = 0F
-            larg2 = 2F
+                //Rocher
+                speed2 = 0F
+                larg2 = 2F
 
-            //Détermination type
-            val y = random.nextInt(4)
-            when(y){
-                0->path2=R.drawable.caillou_arbre
-                1->path2=R.drawable.caillou_buisson
-                2->path2=R.drawable.caillou_fougere
-                3->path2=R.drawable.caillou_palmier
+                //Détermination type
+                val y = random.nextInt(4)
+                when (y) {
+                    0 -> path2 = R.drawable.caillou_arbre
+                    1 -> path2 = R.drawable.caillou_buisson
+                    2 -> path2 = R.drawable.caillou_fougere
+                    3 -> path2 = R.drawable.caillou_palmier
+                }
+                obstacleTemp2 = Obstacle(
+                    (random.nextInt(11) * width).toFloat(),
+                    i * tailleJoueur,
+                    tailleJoueur * larg2,
+                    tailleJoueur * 2,
+                    speed2,
+                    width.toFloat(),
+                    BitmapFactory.decodeResource(resources, path2)
+                )
+                elements.add(obstacleTemp2)
             }
-            obstacleTemp2 = Obstacle(random.nextFloat()*width,i*tailleJoueur, tailleJoueur*larg2,tailleJoueur*2,speed2,
-                width.toFloat(),BitmapFactory.decodeResource(resources,path2))
-            elements.add(obstacleTemp2)
         }
     }
 
