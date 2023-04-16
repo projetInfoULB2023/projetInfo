@@ -42,7 +42,6 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private var reste = 0F
     private val routeImage = BitmapFactory.decodeResource(resources,R.drawable.route)
     private val herbeImage = BitmapFactory.decodeResource(resources,R.drawable.herbe)
-    private val nbreRocher = 4
 
     //Entrée touche
     var x1=0F
@@ -101,13 +100,14 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     }
 
     private fun drawObstacles(){
-        //Génération aléatoire d'obstacles pour 28/4 lignes
+        //Génération aléatoire d'obstacles pour 32/4 lignes
         for (i in 2..32 step 4){
             var r = random.nextInt(3)
             lateinit var obstacleTemp :Obstacle
             var larg = 0F
             var speed = 0F
             var path = 0
+
             when(r){
                 0 -> {
                     //voiture
@@ -153,42 +153,40 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                     path=R.drawable.bus_scolaire
                 }
             }
+
             obstacleTemp = Obstacle(random.nextFloat()*width,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed,
                 width.toFloat(),BitmapFactory.decodeResource(resources,path))
             elements.add(obstacleTemp)
-        }
 
-        for (i in 4..36 step 4) {
-            val x = random.nextInt(nbreRocher)
+            //Génération cailloux
+            val x = random.nextInt(3)
             for (j in 0..x) {
-                lateinit var obstacleTemp2: Obstacle
-                var larg2 = 0F
-                var speed2 = 0F
-                var path2 = 0
+                lateinit var obstacleTemp: ObstacleFixe
+                var path = 0
 
                 //Rocher
-                speed2 = 0F
-                larg2 = 2F
+                val speed = 0F
+                val larg = 2F
 
                 //Détermination type
                 val y = random.nextInt(4)
                 when (y) {
-                    0 -> path2 = R.drawable.caillou_arbre
-                    1 -> path2 = R.drawable.caillou_buisson
-                    2 -> path2 = R.drawable.caillou_fougere
-                    3 -> path2 = R.drawable.caillou_palmier
+                    0 -> path = R.drawable.caillou_arbre
+                    1 -> path = R.drawable.caillou_buisson
+                    2 -> path = R.drawable.caillou_fougere
+                    3 -> path = R.drawable.caillou_palmier
                 }
-                obstacleTemp2 = Obstacle(
-                    (random.nextInt(12) * tailleJoueur * 2).toFloat(),
-                    i * tailleJoueur,
-                    tailleJoueur * larg2,
+                obstacleTemp = ObstacleFixe(
+                    (random.nextInt(12) * tailleJoueur*2).toFloat(),
+                    (i+2) * tailleJoueur,
+                    tailleJoueur * larg,
                     tailleJoueur * 2,
-                    speed2,
                     width.toFloat(),
-                    BitmapFactory.decodeResource(resources, path2)
+                    BitmapFactory.decodeResource(resources, path)
                 )
-                elements.add(obstacleTemp2)
+                elements.add(obstacleTemp)
             }
+
         }
     }
 
