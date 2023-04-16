@@ -76,29 +76,35 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     }
 
     private fun tickGame(){
-        autoGen()
         for(obs in decor) obs.avance(canvas)
         for(obs in elements) obs.avance(canvas)
+        autoGen()
         joueur.collision(elements,direction,saut)
         joueur.detectSortieEcran()
         joueur.avance(canvas)
     }
     fun autoGen(){
         //Analyse la position en y du premier élément pour déterminer quand générer la suite
-        if(decor[0].y1> -tailleJoueur){
+        if(decor[0].y1> 0 ){
             //On génère une nouvelle ligne
             if(counter%2 == 0){
                 //On génère une ligne d'herbe
-                val herbe = Obstacle(0F,-5/2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,herbeImage)
+                val herbe = Obstacle(0F,-2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,herbeImage)
                 //Manipulation pour mettre la nouvelle herbe en première position
                 decor.add(decor[0])
                 decor[0] = herbe
             }else{
                 //On génère une ligne de route
-
+                val route = Obstacle(0F,-2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
+                decor.add(decor[0])
+                decor[0] = route
 
             }
             counter+=1
+        }
+        if(decor[decor.size-1].y1 > height){
+            decor.removeAt(decor.size-1)
+            println(decor.size)
         }
     }
     fun getMediaPlayer(music:MediaPlayer){
@@ -107,7 +113,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
 
     private fun drawObstacles(){
         //Génération aléatoire d'obstacles pour 32/4 lignes
-        for (i in -2..34 step 4){
+        for (i in 0..32 step 4){
             var r = random.nextInt(3)
             lateinit var obstacleTemp :Obstacle
             var larg = 0F
