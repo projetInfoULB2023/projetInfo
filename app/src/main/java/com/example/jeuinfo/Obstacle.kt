@@ -3,7 +3,7 @@ package com.example.jeuinfo
 import android.graphics.*
 import kotlin.random.Random
 
-class Obstacle(
+open class Obstacle(
     x1:Float,
     y1:Float,
     largeur:Float,
