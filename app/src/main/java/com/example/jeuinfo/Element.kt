@@ -5,7 +5,6 @@ import java.util.*
 
 
 open class Element(x1:Float, y1:Float, largeur:Float,hauteur:Float,image:Bitmap) {
-    private val random = Random()
     private val paint = Paint()
     private val vitesseCam = 0.5F
     var image = image
@@ -26,4 +25,5 @@ open class Element(x1:Float, y1:Float, largeur:Float,hauteur:Float,image:Bitmap)
         y1+=vitesseCam
         draw(canvas)
     }
+
 }
