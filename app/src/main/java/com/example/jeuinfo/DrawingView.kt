@@ -70,7 +70,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private fun setupVariables(){
         tailleJoueur = width/24F
         saut = tailleJoueur*2F
-        reste = height*7/8 % tailleJoueur
+        reste = tailleJoueur*36 % tailleJoueur
         routeImage=Bitmap.createScaledBitmap(routeImage,width,tailleJoueur.toInt()*2,false)
         herbeImage=Bitmap.createScaledBitmap(herbeImage,width,tailleJoueur.toInt()*2,false)
     }
@@ -98,7 +98,6 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 val route = Obstacle(0F,-2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
                 decor.add(decor[0])
                 decor[0] = route
-
             }
             counter+=1
         }
@@ -206,7 +205,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
 
     private fun drawPlayer(){
         //alligne le joueur et les obstacles
-        posJoueur= arrayOf(width/12*7F-tailleJoueur,height*7/8-reste)
+        posJoueur= arrayOf(width/12*7F-tailleJoueur,tailleJoueur*35)
         joueur = Joueur((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),tailleJoueur*2,
             tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,music1,BitmapFactory.decodeResource(resources,R.drawable.bersini))
     }
