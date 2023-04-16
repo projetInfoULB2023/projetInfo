@@ -76,20 +76,26 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
 
     private fun tickGame(){
         for(obs in decor) obs.avance(canvas)
-        for(obs in elements){
-            obs.avance(canvas)
-        }
+        for(obs in elements) obs.avance(canvas)
         joueur.detectSortieEcran()
-        collisions()
         joueur.avance(canvas)
     }
 
-    private fun collisions(){
+    private fun collisions(direction:Int){
         for(obstacle in elements){
             //Vérification uniquement si le joueur est sur la ligne de l'obstacle, sinon pas nécessaire => fait gagner en performance
-            if(abs(obstacle.y1-joueur.y1)<tailleJoueur){
+            if(abs(obstacle.y1-joueur.y1)< tailleJoueur){
                 if(obstacle.r.intersect(joueur.r)){
-                    joueur.y1+=saut
+                    if(obstacle is ObstacleFixe){
+                        println("collision !!!")
+                        //0, haut. 1, bas. 2, gauche.3, droite
+                        when(direction){
+                            0 -> joueur.y1 +=saut
+                            1 -> joueur.y1 -= saut
+                            2 -> joueur.x1 += saut
+                            3 -> joueur.x1 -= saut
+                        }
+                    }
                 }
             }
         }
@@ -186,7 +192,6 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 )
                 elements.add(obstacleTemp)
             }
-
         }
     }
 
@@ -226,28 +231,25 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                     if(x2-x1 > 0){
                         //Droite
                         joueur.x1 += saut
+                        collisions(3)
                     }else{
                         //Gauche
                         joueur.x1 -= saut
+                        collisions(2)
                     }
                 }else{
                     //Mouvement vertical, reste à déterminer haut ou bas
                     if(y2-y1 > 0){
                         //Bas
                         joueur.y1 += saut
+                        collisions(1)
                     }else {
                         //Haut
                         joueur.y1 -= saut
+                        collisions(0)
                     }
                 }
             }
-        }
-
-        if (e.action == MotionEvent.ACTION_DOWN) {
-            // x et y donnent la position du click, il faudrait encore tester le y par rapport à la position de notre drawingview sur l'écran
-            val x = e.rawX
-            //Le -724 est à retester avec d'autres tailles d'écran
-            val y = e.rawY - 724
         }
         //invalidate permet de dessiner ce qui a été changé
         invalidate()

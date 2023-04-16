@@ -24,4 +24,5 @@ class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,width:Float,height:Fl
             deadSound.start()
         }
     }
+
 }
