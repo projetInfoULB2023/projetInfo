@@ -58,6 +58,8 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private var camionBleu = BitmapFactory.decodeResource(resources,R.drawable.camion_bleu)
     private var camionRouge = BitmapFactory.decodeResource(resources,R.drawable.camion_rouge)
 
+    private var marge =3
+
     private var counter =0
     private var time =200
     //Entrée touche
@@ -208,9 +210,12 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
             }
             counter+=1
             //Supprime les éléments qui ont quitté le jeu
-
+            for(el in decor){
+                if (el.y1 > height+tailleJoueur*2){}
+                    //decor.remove(el)
+            }
+            println(decor.size)
         }
-        print(decor.size)
         time+=1
     }
     fun getMediaPlayer(music:MediaPlayer){
