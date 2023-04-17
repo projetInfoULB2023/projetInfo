@@ -10,7 +10,6 @@ class ObstacleFixe(x1:Float,
                    width:Float,
                    image: Bitmap
 ) : Obstacle(x1,y1,largeur,hauteur,0F,width,image){
-    override var dx = 1
     override fun deplacement() {
     }
 
