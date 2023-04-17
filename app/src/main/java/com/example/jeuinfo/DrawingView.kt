@@ -24,7 +24,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private var deviceWidth = 0
     private val backgroundPaint = Paint()
     private val random = Random()
-    private val maxVoitures = 2
+    private val maxVoitures = 3
     private val maxCailloux = 3
     private var drawing = true
     lateinit var canvas:Canvas
@@ -173,21 +173,20 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 var speed = 0F
                 var image = caillouArbre
                 val z = random.nextInt(maxVoitures)
-                var vehiList = mutableListOf(0,1,2,3)
+                var vehiList = mutableListOf(1,4,7,10)
                 //Meme direction pour tous les véhicules de la meme ligne
                 var dx = if(random.nextFloat()> 0.5) 1 else -1
+                println(z+1)
                 for(j in 0..z) {
                     val index = random.nextInt(vehiList.size)
                     val location = vehiList[index]
-                    vehiList.remove(location)
                     when (r) {
                         0 -> {
                             //voiture
-                            speed = 5F
+                            speed = 7F
                             larg = 2F
                             //Détermination couleur
-                            val y = random.nextInt(5)
-                            when (y) {
+                            when (random.nextInt(5)) {
                                 0 -> image = voitureBleu
                                 1 -> image = voitureGrise
                                 2 -> image = voitureJaune
@@ -197,7 +196,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                         }
                         1 -> {
                             //camion
-                            speed = 4F
+                            speed = 5F
                             larg = 4F
                             //Reste à déterminer la couleur
                             val y = random.nextInt(2)
@@ -208,14 +207,16 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                         }
                         2 -> {
                             //bus scolaire, rien d'autre à déterminer
-                            speed = 3F
+                            speed = 4F
                             larg = 5F
                             image = busScolaire
                         }
                     }
-                    obstacleTemp = Obstacle(location*tailleJoueur*6,-2*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed,
+                    obstacleTemp = Obstacle(location*tailleJoueur*2,-2*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
                         width.toFloat(),image)
                     elements.add(obstacleTemp)
+                    vehiList.remove(location)
+
                 }
             }
             //Supprime les éléments qui ont quitté le jeu
@@ -247,7 +248,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
             var speed = 0F
             var path = 0
             val z = random.nextInt(maxVoitures)
-            var vehiList = mutableListOf(0,1,2,3)
+            var vehiList = mutableListOf(2,5,8,11)
             //Meme direction pour tous les véhicules de la meme ligne
             var dx = if(random.nextFloat()> 0.5) 1 else -1
             for(j in 0..z){
@@ -257,7 +258,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 when(r){
                     0 -> {
                         //voiture
-                        speed = 5F
+                        speed = 7F
                         larg = 2F
                         //Détermination couleur
                         val y = random.nextInt(5)
@@ -271,7 +272,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                     }
                     1 -> {
                         //camion
-                        speed = 4F
+                        speed = 5F
                         larg=4F
                         //Reste à déterminer la couleur
                         val y = random.nextInt(2)
@@ -283,12 +284,12 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                     2 -> {
                         //bus scolaire, rien d'autre à déterminer
 
-                        speed = 3F
+                        speed = 4F
                         larg=5F
                         path=R.drawable.bus_scolaire
                     }
                 }
-                obstacleTemp = Obstacle(location*tailleJoueur*6,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
+                obstacleTemp = Obstacle(location*tailleJoueur*2,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
                     width.toFloat(),BitmapFactory.decodeResource(resources,path))
                 elements.add(obstacleTemp)
             }
