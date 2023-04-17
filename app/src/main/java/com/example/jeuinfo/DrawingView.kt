@@ -131,7 +131,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 //Manipulation pour mettre la nouvelle herbe en première position
                 decor.add(herbe)
                 //Génération cailloux
-                val x = random.nextInt(3)
+                val x = random.nextInt(maxCailloux)
                 var list = mutableListOf(0,1,2,3,4,5,6,7,8,9,10,11)
                 for (j in 0..x) {
                     val index = random.nextInt(list.size)
@@ -166,7 +166,6 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 //On génère une ligne de route
                 val route = Obstacle(0F,-2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
                 decor.add(route)
-
                 //Génération de véhicules
                 var r = random.nextInt(3)
                 lateinit var obstacleTemp :Obstacle
