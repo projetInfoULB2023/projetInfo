@@ -40,12 +40,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
-        drawingView.setPause(true)
+        drawingView.pause()
         return super.onMenuOpened(featureId, menu)
     }
 
     override fun onPanelClosed(featureId: Int, menu: Menu) {
-        if(menuTest == 0) drawingView.setPause(false)
+        if(menuTest == 0) drawingView.resume()
         super.onPanelClosed(featureId, menu)
     }
 
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
                 builder.setMessage("An app brought to you by Poly polyp inc.")
                 builder.apply {
                     setNeutralButton("return", DialogInterface.OnClickListener{ dialog, id ->
-                        drawingView.setPause(false)
+                        drawingView.resume()
                         menuTest = 0
                     })
                 }

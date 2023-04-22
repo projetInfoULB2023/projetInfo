@@ -60,9 +60,6 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private var camionBleu = BitmapFactory.decodeResource(resources,R.drawable.camion_bleu)
     private var camionRouge = BitmapFactory.decodeResource(resources,R.drawable.camion_rouge)
 
-    private var marge =3
-
-    var pause = false
     private var counter =0
     private var time =200
 
@@ -71,45 +68,32 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     var x2=0F
     var y1=0F
     var y2=0F
-    fun setPause(x:Boolean):Int{
-        pause=x
-        return 1
-    }
     private fun draw(){
         if(holder.surface.isValid){
-            if(!pause){
-                canvas =holder.lockCanvas()
-                //Permet de ne pas acculumer les éléments dessinés
-                backgroundPaint.color= Color.WHITE
-                canvas?.drawRect(0F,0F,width.toFloat(),height.toFloat(),backgroundPaint)
-                //Code pour dessiner ici
-                if(!setup){
-                    setupVariables()
-                    drawObstacles()
-                    drawPlayer()
-                    setup = true
-                }
-                tickGame()
-                //Fin code pour dessiner
-                holder.unlockCanvasAndPost(canvas)
+            canvas =holder.lockCanvas()
+            //Permet de ne pas acculumer les éléments dessinés
+            backgroundPaint.color= Color.WHITE
+            canvas?.drawRect(0F,0F,width.toFloat(),height.toFloat(),backgroundPaint)
+            //Code pour dessiner ici
+            if(!setup){
+                setupVariables()
+                drawObstacles()
+                drawPlayer()
+                setup = true
             }
-        }
+            tickGame()
+            //Fin code pour dessiner
+            holder.unlockCanvasAndPost(canvas)
+            }
     }
     private fun setupVariables(){
-        setTailleJoueur(width/24F)
+        tailleJoueur=width/24F
         saut = tailleJoueur*2F
-        setReste(tailleJoueur*36%tailleJoueur)
+        reste=tailleJoueur*36%tailleJoueur
         //decor
         routeImage=Bitmap.createScaledBitmap(routeImage,width,tailleJoueur.toInt()*2,true)
         herbeImage=Bitmap.createScaledBitmap(herbeImage,width,tailleJoueur.toInt()*2,false)
         //vehicules
-    }
-
-    private fun setReste(x:Float){
-        reste=x
-    }
-    private fun setTailleJoueur(x:Float){
-        tailleJoueur = x
     }
 
     private fun tickGame(){
@@ -121,7 +105,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         joueur.avance(canvas)
     }
 
-    fun autoGen(){
+    private fun autoGen(){
         //Analyse la position en y du premier élément pour déterminer quand générer la suite
         if(time*Element.vitesseCam>=tailleJoueur*2){
             time=0
