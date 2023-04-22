@@ -11,7 +11,7 @@ import kotlin.math.abs
 class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,private val width:Float,private val height:Float,
              private val taillejoueur:Float,private val deadSound:Son,image:Bitmap)
     : Element(x1,y1,largeur,hauteur,image) {
-    //Association avec le deadSound:Son
+    //Composition avec le deadSound:Son
 
     fun detectSortieEcran(){
         if(this.x1 + largeur > width){
@@ -30,7 +30,7 @@ class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,private val width:Flo
             //Vérification uniquement si le joueur est sur la ligne de l'obstacle, sinon pas nécessaire => fait gagner en performance
             if(abs(obstacle.y1-this.y1) < taillejoueur){
                 if(obstacle.r.intersect(this.r)){
-                    if(obstacle is ObstacleFixe){
+                    if(obstacle !is Deplacable){
                         //0, haut. 1, bas. 2, gauche.3, droite
                         when(direction){
                             0 -> this.y1 += saut
@@ -38,7 +38,7 @@ class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,private val width:Flo
                             2 -> this.x1 += saut
                             3 -> this.x1 -= saut
                         }
-                    }else if (obstacle is Obstacle){
+                    }else if (obstacle is Deplacable){
 
                     }
                 }

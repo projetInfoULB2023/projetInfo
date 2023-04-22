@@ -119,7 +119,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             //On génère une nouvelle ligne
             if(counter%2 == 0){
                 //On génère une ligne d'herbe
-                val herbe = Obstacle(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,herbeImage)
+                val herbe = ObstacleMouvant(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,herbeImage)
                 //Manipulation pour mettre la nouvelle herbe en première position
                 decor.add(herbe)
                 //Génération cailloux
@@ -129,7 +129,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                     val index = random.nextInt(list.size)
                     val location = list[index]
                     list.remove(location)
-                    lateinit var obstacleTemp: ObstacleFixe
+                    lateinit var obstacleTemp: Element
                     var image = caillouArbre
 
                     //Rocher
@@ -143,23 +143,22 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                         2 -> image = caillouFougere
                         3 -> image = caillouPalmier
                     }
-                    obstacleTemp = ObstacleFixe(
+                    obstacleTemp = Element(
                         (location * tailleJoueur*2),
                         posLow-2 * tailleJoueur,
                         tailleJoueur * larg,
                         tailleJoueur * 2,
-                        width.toFloat(),
                         image
                     )
                     elements.add(obstacleTemp)
                 }
             }else{
             //On génère une ligne de route
-            val route = Obstacle(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
+            val route = ObstacleMouvant(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
             decor.add(route)
             //Génération de véhicules
             var r = random.nextInt(3)
-            lateinit var obstacleTemp :Obstacle
+            lateinit var obstacleTemp :ObstacleMouvant
             var larg = 0F
             var speed = 0F
             var image = caillouArbre
@@ -202,7 +201,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                         image = busScolaire
                         }
                     }
-                    obstacleTemp = Obstacle(location*tailleJoueur*2,posLow-2*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
+                    obstacleTemp = ObstacleMouvant(location*tailleJoueur*2,posLow-2*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
                         width.toFloat(),image)
                     elements.add(obstacleTemp)
                     vehiList.remove(location)
@@ -232,7 +231,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         //Génération aléatoire d'obstacles
         for (i in 0..(height/tailleJoueur).toInt() step 4){
             var r = random.nextInt(3)
-            lateinit var obstacleTemp :Obstacle
+            lateinit var obstacleTemp :ObstacleMouvant
             var larg = 0F
             var speed = 0F
             var path = 0
@@ -277,15 +276,15 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                         path=R.drawable.bus_scolaire
                     }
                 }
-                obstacleTemp = Obstacle(location*tailleJoueur*2,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
+                obstacleTemp = ObstacleMouvant(location*tailleJoueur*2,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
                     width.toFloat(),BitmapFactory.decodeResource(resources,path))
                 elements.add(obstacleTemp)
             }
 
             //Génération lignes de terrain
-            val herbe = Obstacle(0F,(i+2)*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,herbeImage)
+            val herbe = Element(0F,(i+2)*tailleJoueur,width.toFloat(),tailleJoueur*2 ,herbeImage)
             decor.add(herbe)
-            val route = Obstacle(0F,i*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
+            val route = Element(0F,i*tailleJoueur,width.toFloat(),tailleJoueur*2,routeImage)
             decor.add(route)
 
             //Génération cailloux
@@ -295,7 +294,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 val index = random.nextInt(caiList.size)
                 val location = caiList[index]
                 caiList.remove(location)
-                lateinit var obstacleTemp: ObstacleFixe
+                lateinit var obstacleTemp: Element
                 var path = 0
 
                 //Rocher
@@ -310,12 +309,11 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                     2 -> path = R.drawable.caillou_fougere
                     3 -> path = R.drawable.caillou_palmier
                 }
-                obstacleTemp = ObstacleFixe(
+                obstacleTemp = Element(
                     (location * tailleJoueur*2),
                     (i+2) * tailleJoueur,
                     tailleJoueur * larg,
                     tailleJoueur * 2,
-                    width.toFloat(),
                     BitmapFactory.decodeResource(resources, path)
                 )
                 elements.add(obstacleTemp)
@@ -326,8 +324,8 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private fun drawPlayer(){
         val deadSound = Son(context,R.raw.mort)
         //alligne le joueur et les obstacles
-        posJoueur= arrayOf(width/12*7F-tailleJoueur,tailleJoueur*35)
-        joueur = Joueur((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),tailleJoueur*2,
+        posJoueur= arrayOf(width/12*7F-tailleJoueur,tailleJoueur*((height/tailleJoueur).toInt()-2))
+        joueur = Joueur((posJoueur[0]-tailleJoueur),(posJoueur[1]+tailleJoueur).toFloat(),tailleJoueur*2,
             tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,deadSound,BitmapFactory.decodeResource(resources,R.drawable.bersini))
     }
 
