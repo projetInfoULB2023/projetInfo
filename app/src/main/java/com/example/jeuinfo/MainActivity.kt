@@ -13,11 +13,8 @@ import android.view.MenuItem
 import android.widget.Toast
 import kotlin.system.exitProcess
 
-
-
 class MainActivity : AppCompatActivity() {
     private lateinit var drawingView:DrawingView
-    val vitesseTemp = Element.vitesseCam
     var menuTest = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,26 +40,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
-        Element.vitesseCam = 0F
+        drawingView.setPause(true)
         return super.onMenuOpened(featureId, menu)
     }
 
     override fun onPanelClosed(featureId: Int, menu: Menu) {
-        if(menuTest == 0) Element.vitesseCam = vitesseTemp
+        if(menuTest == 0) drawingView.setPause(false)
         super.onPanelClosed(featureId, menu)
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.about -> {
                 menuTest = 1
-                Element.vitesseCam = 0F
                 Toast.makeText(this, "About Selected", Toast.LENGTH_SHORT).show()
                 val builder = AlertDialog.Builder(this)
                 builder.setTitle("About")
                 builder.setMessage("An app brought to you by Poly polyp inc.")
                 builder.apply {
                     setNeutralButton("return", DialogInterface.OnClickListener{ dialog, id ->
-                        Element.vitesseCam = vitesseTemp
+                        drawingView.setPause(false)
                         menuTest = 0
                     })
                 }
