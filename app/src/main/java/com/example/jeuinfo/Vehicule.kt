@@ -3,21 +3,17 @@ package com.example.jeuinfo
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Matrix
+import android.graphics.RectF
+import kotlin.math.abs
 
-class ObstacleMouvant(x1:Float,
+class Vehicule(x1:Float,
                       y1:Float,
                       largeur:Float,
                       hauteur:Float,
                       private val vitesse:Float,
                       private val width:Float,
-                      image: Bitmap): Element(x1,y1,largeur,hauteur, image),Deplacable {
+                      image: Bitmap): Element(x1,y1,largeur,hauteur, image),Deplacable,CollisionImportante {
     override fun deplacement() {
-        //Permet le rebond
-
-        //dx = if(this.x1+largeur >= width ) -1 else if (this.x1 <= 0) 1 else dx
-        //this.r.offset(dx*vitesse,0F)
-        //this.x1 += dx*vitesse
-
         //Permet la réapparition de l'autre coté de l'écran
         if(this.x1>=width && vitesse > 0){
             this.x1=-largeur
@@ -29,8 +25,8 @@ class ObstacleMouvant(x1:Float,
         this.x1 += vitesse
     }
 
-    private var imageSetup = false
-    private fun setupImage(){
+    override var imageSetup = false
+    override fun setupImage(){
         //flip l'image si l'obstacle recule (cohérence de la tete du camion)
         if(vitesse<0){
             val matrix = Matrix().apply { postScale(-1f, 1f, image.width.toFloat() / 2f, image.height.toFloat() / 2f) }
@@ -45,4 +41,13 @@ class ObstacleMouvant(x1:Float,
         this.deplacement()
         super.avance(canvas)
     }
-}
+
+    override fun collision(joueur:Joueur) {
+        joueur.r = RectF(joueur.x1+marge,joueur.y1+marge,joueur.x1+joueur.largeur-marge,joueur.y1+joueur.hauteur-marge)
+        if(abs(this.y1-joueur.y1) < joueur.taillejoueur){
+            if(this.r.intersect(joueur.r)){
+                //Code pour mort du joueur
+            }
+            }
+        }
+                      }

@@ -9,7 +9,7 @@ import java.util.ArrayList
 import kotlin.math.abs
 
 class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,private val width:Float,private val height:Float,
-             private val taillejoueur:Float,private val deadSound:Son,image:Bitmap)
+              val taillejoueur:Float,private val deadSound:Son,image:Bitmap)
     : Element(x1,y1,largeur,hauteur,image) {
     //Composition avec le deadSound:Son
 

@@ -14,8 +14,9 @@ import kotlin.math.abs
 //Etapes importantes
 
 //Eventuellement penser à des pouvoirs (blocs à récupérer pour avoir une vie en plus,sauter plus loin, détruire un obstacle, ...)
-//Génération automatique et aléatoire d'obstacles
 //Ajout différents personnages
+//Mort quand écrasé par véhicules (collisions mortelles)
+//Rien quand tente d'avancer sur un cailloux
 
 class DrawingView @JvmOverloads constructor (private var context: Context, attributes: AttributeSet? = null, defStyleAttr: Int = 0): SurfaceView(context, attributes,defStyleAttr),
     SurfaceHolder.Callback,Runnable {
@@ -36,7 +37,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private val red = Color.RED
     private lateinit var posJoueur:Array<Float>
     private var setup = false
-    private var elements = ArrayList<Element>()
+    private var elements = mutableListOf<Element>()
     private var decor = ArrayList<Element>()
     private lateinit var joueur: Joueur
     private var reste = 0F
@@ -97,8 +98,15 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private fun tickGame(){
         autoGen()
         for(obs in decor) obs.avance(canvas)
-        for(obs in elements) obs.avance(canvas)
-        joueur.collision(elements,direction,saut)
+        for(obs in elements) {
+            obs.avance(canvas)
+            if(obs is Deplacable){
+                if(!obs.imageSetup)obs.setupImage()
+                obs.deplacement()
+                if(obs is CollisionImportante) obs.collision(joueur)
+            }
+
+        }
         joueur.detectSortieEcran()
         joueur.avance(canvas)
     }
@@ -119,7 +127,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             //On génère une nouvelle ligne
             if(counter%2 == 0){
                 //On génère une ligne d'herbe
-                val herbe = ObstacleMouvant(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,herbeImage)
+                val herbe = Element(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,herbeImage)
                 //Manipulation pour mettre la nouvelle herbe en première position
                 decor.add(herbe)
                 //Génération cailloux
@@ -129,7 +137,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                     val index = random.nextInt(list.size)
                     val location = list[index]
                     list.remove(location)
-                    lateinit var obstacleTemp: Element
+                    lateinit var obstacleTemp: Cailloux
                     var image = caillouArbre
 
                     //Rocher
@@ -143,7 +151,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                         2 -> image = caillouFougere
                         3 -> image = caillouPalmier
                     }
-                    obstacleTemp = Element(
+                    obstacleTemp = Cailloux(
                         (location * tailleJoueur*2),
                         posLow-2 * tailleJoueur,
                         tailleJoueur * larg,
@@ -154,11 +162,11 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 }
             }else{
             //On génère une ligne de route
-            val route = ObstacleMouvant(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
+            val route = Element(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,routeImage)
             decor.add(route)
             //Génération de véhicules
             var r = random.nextInt(3)
-            lateinit var obstacleTemp :ObstacleMouvant
+            lateinit var obstacleTemp :Vehicule
             var larg = 0F
             var speed = 0F
             var image = caillouArbre
@@ -201,8 +209,9 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                         image = busScolaire
                         }
                     }
-                    obstacleTemp = ObstacleMouvant(location*tailleJoueur*2,posLow-2*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
+                    obstacleTemp = Vehicule(location*tailleJoueur*2,posLow-2*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
                         width.toFloat(),image)
+
                     elements.add(obstacleTemp)
                     vehiList.remove(location)
 
@@ -231,7 +240,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         //Génération aléatoire d'obstacles
         for (i in 0..(height/tailleJoueur).toInt() step 4){
             var r = random.nextInt(3)
-            lateinit var obstacleTemp :ObstacleMouvant
+            lateinit var obstacleTemp :Vehicule
             var larg = 0F
             var speed = 0F
             var path = 0
@@ -276,7 +285,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                         path=R.drawable.bus_scolaire
                     }
                 }
-                obstacleTemp = ObstacleMouvant(location*tailleJoueur*2,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
+                obstacleTemp = Vehicule(location*tailleJoueur*2,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
                     width.toFloat(),BitmapFactory.decodeResource(resources,path))
                 elements.add(obstacleTemp)
             }
@@ -294,7 +303,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 val index = random.nextInt(caiList.size)
                 val location = caiList[index]
                 caiList.remove(location)
-                lateinit var obstacleTemp: Element
+                lateinit var obstacleTemp: Cailloux
                 var path = 0
 
                 //Rocher
@@ -309,7 +318,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                     2 -> path = R.drawable.caillou_fougere
                     3 -> path = R.drawable.caillou_palmier
                 }
-                obstacleTemp = Element(
+                obstacleTemp = Cailloux(
                     (location * tailleJoueur*2),
                     (i+2) * tailleJoueur,
                     tailleJoueur * larg,
@@ -374,6 +383,9 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                         joueur.y1 -= saut
                         direction=0
                     }
+                }
+                for(obs in elements){
+                    if(obs is CollisionSimple) obs.collision(joueur,direction,saut)
                 }
             }
         }
