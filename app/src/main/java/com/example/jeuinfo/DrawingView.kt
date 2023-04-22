@@ -55,6 +55,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private var busScolaire=BitmapFactory.decodeResource(resources,R.drawable.bus_scolaire,options)
     private var camionBleu = BitmapFactory.decodeResource(resources,R.drawable.camion_bleu)
     private var camionRouge = BitmapFactory.decodeResource(resources,R.drawable.camion_rouge)
+    private var monstre = BitmapFactory.decodeResource(resources,R.drawable.monstre)
     private var startingPos =0F
     private var time =0
     //Entrée touche
@@ -76,6 +77,8 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 drawObstacles()
                 drawPlayer()
                 setup = true
+                sonMonstre.setVolume(0F)
+                sonMonstre.start()
             }
             if(joueur.alive) tickGame()
             else mort()
@@ -83,9 +86,13 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             holder.unlockCanvasAndPost(canvas)
             }
     }
+    private var sonMonstre = Son(context,R.raw.grognement)
     private fun mort(){
         //On reinitialise la partie
         if (!deadScreen){
+            sonMonstre.setVolume(1F)
+            sonMonstre.start()
+            joueur.deadSound.start()
             obstacles.clear()
             decor.clear()
             deadScreen=true
@@ -97,6 +104,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         canvas?.drawText("TY E MOO' !",width/2F-width/2.3F,height/2F-20,textPaint)
         textPaint.textSize = width/15F
         canvas?.drawText("Clique sur l'écran pour rejouer",width/15F,height/2F+height/10,textPaint)
+        canvas?.drawBitmap(monstre,null,Rect(0,0,width,height),backgroundPaint)
         if(compteurMort>80)
             backgroundPaint.color=Color.GREEN
 
@@ -112,7 +120,8 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         startingPos = tailleJoueur*((height/tailleJoueur).toInt()-8)
         //decor
         routeImage=Bitmap.createScaledBitmap(routeImage,width,tailleJoueur.toInt()*2,true)
-        herbeImage=Bitmap.createScaledBitmap(herbeImage,width,tailleJoueur.toInt()*2,false)
+        herbeImage=Bitmap.createScaledBitmap(herbeImage,width,tailleJoueur.toInt()*2,true)
+        monstre=Bitmap.createScaledBitmap(monstre,width,height,true)
     }
 
     private fun tickGame(){

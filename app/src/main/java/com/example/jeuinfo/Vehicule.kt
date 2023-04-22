@@ -47,7 +47,6 @@ class Vehicule(x1:Float,
         if(abs(this.y1-joueur.y1) < joueur.taillejoueur){
             if(this.r.intersect(joueur.r)){
                 //Code pour mort du joueur, le jeu se réinitialise
-                joueur.deadSound.start()
                 joueur.alive = false
             }
             }
