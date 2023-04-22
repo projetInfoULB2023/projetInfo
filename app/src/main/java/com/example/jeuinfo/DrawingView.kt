@@ -62,54 +62,54 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
 
     private var marge =3
 
+    var pause = false
     private var counter =0
     private var time =200
+
     //Entrée touche
     var x1=0F
     var x2=0F
     var y1=0F
     var y2=0F
-
+    fun setPause(x:Boolean):Int{
+        pause=x
+        return 1
+    }
     private fun draw(){
         if(holder.surface.isValid){
-            canvas =holder.lockCanvas()
-            //Permet de ne pas acculumer les éléments dessinés
-            backgroundPaint.color= Color.WHITE
-            canvas?.drawRect(0F,0F,width.toFloat(),height.toFloat(),backgroundPaint)
-            //Code pour dessiner ici
-            if(!setup){
-                setupVariables()
-                drawObstacles()
-                drawPlayer()
-                setup = true
+            if(!pause){
+                canvas =holder.lockCanvas()
+                //Permet de ne pas acculumer les éléments dessinés
+                backgroundPaint.color= Color.WHITE
+                canvas?.drawRect(0F,0F,width.toFloat(),height.toFloat(),backgroundPaint)
+                //Code pour dessiner ici
+                if(!setup){
+                    setupVariables()
+                    drawObstacles()
+                    drawPlayer()
+                    setup = true
+                }
+                tickGame()
+                //Fin code pour dessiner
+                holder.unlockCanvasAndPost(canvas)
             }
-
-            tickGame()
-            //Fin code pour dessiner
-            holder.unlockCanvasAndPost(canvas)
         }
     }
     private fun setupVariables(){
-        tailleJoueur = width/24F
+        setTailleJoueur(width/24F)
         saut = tailleJoueur*2F
-        reste = tailleJoueur*36 % tailleJoueur
+        setReste(tailleJoueur*36%tailleJoueur)
         //decor
         routeImage=Bitmap.createScaledBitmap(routeImage,width,tailleJoueur.toInt()*2,true)
         herbeImage=Bitmap.createScaledBitmap(herbeImage,width,tailleJoueur.toInt()*2,false)
         //vehicules
-        //busScolaire=Bitmap.createScaledBitmap(busScolaire,5,tailleJoueur.toInt()*2,false)
-        //camionBleu=Bitmap.createScaledBitmap(camionBleu,4,tailleJoueur.toInt()*2,false)
-        //camionRouge=Bitmap.createScaledBitmap(camionRouge,4,tailleJoueur.toInt()*2,false)
-        //voitureBleu=Bitmap.createScaledBitmap(voitureBleu,2,tailleJoueur.toInt()*2,false)
-        //voitureGrise=Bitmap.createScaledBitmap(voitureGrise,2,tailleJoueur.toInt()*2,false)
-        //voitureJaune=Bitmap.createScaledBitmap(voitureJaune,2,tailleJoueur.toInt()*2,false)
-        //voitureRouge=Bitmap.createScaledBitmap(voitureRouge,2,tailleJoueur.toInt()*2,false)
-        //voitureOrange=Bitmap.createScaledBitmap(voitureOrange,2,tailleJoueur.toInt()*2,false)
-        //cailloux
-        //caillouArbre=Bitmap.createScaledBitmap(caillouArbre,2,tailleJoueur.toInt()*2,false)
-        //caillouBuisson=Bitmap.createScaledBitmap(caillouBuisson,2,tailleJoueur.toInt()*2,false)
-        //caillouFougere=Bitmap.createScaledBitmap(caillouFougere,2,tailleJoueur.toInt()*2,false)
-        //caillouPalmier=Bitmap.createScaledBitmap(caillouPalmier,2,tailleJoueur.toInt()*2,false)
+    }
+
+    private fun setReste(x:Float){
+        reste=x
+    }
+    private fun setTailleJoueur(x:Float){
+        tailleJoueur = x
     }
 
     private fun tickGame(){
@@ -120,6 +120,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         joueur.detectSortieEcran()
         joueur.avance(canvas)
     }
+
     fun autoGen(){
         //Analyse la position en y du premier élément pour déterminer quand générer la suite
         if(time*Element.vitesseCam>=tailleJoueur*2){
@@ -161,7 +162,6 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                     )
                     elements.add(obstacleTemp)
                 }
-
             }else{
                 //On génère une ligne de route
                 val route = Obstacle(0F,-2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
@@ -176,7 +176,6 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 var vehiList = mutableListOf(1,4,7,10)
                 //Meme direction pour tous les véhicules de la meme ligne
                 var dx = if(random.nextFloat()> 0.5) 1 else -1
-                println(z+1)
                 for(j in 0..z) {
                     val index = random.nextInt(vehiList.size)
                     val location = vehiList[index]
@@ -283,7 +282,6 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                     }
                     2 -> {
                         //bus scolaire, rien d'autre à déterminer
-
                         speed = 4F
                         larg=5F
                         path=R.drawable.bus_scolaire
