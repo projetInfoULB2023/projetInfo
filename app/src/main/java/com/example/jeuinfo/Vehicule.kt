@@ -12,7 +12,7 @@ class Vehicule(x1:Float,
                       hauteur:Float,
                       private val vitesse:Float,
                       private val width:Float,
-                      image: Bitmap): Element(x1,y1,largeur,hauteur, image),Deplacable,CollisionImportante {
+                      image: Bitmap): Element(x1,y1,largeur,hauteur, image),Deplacable,CollisionMortelle {
     override fun deplacement() {
         //Permet la réapparition de l'autre coté de l'écran
         if(this.x1>=width && vitesse > 0){
@@ -42,11 +42,13 @@ class Vehicule(x1:Float,
         super.avance(canvas)
     }
 
-    override fun collision(joueur:Joueur) {
+    override fun collision(joueur:Joueur,obstacles:MutableList<Element>,startingPos:Float) {
         joueur.r = RectF(joueur.x1+marge,joueur.y1+marge,joueur.x1+joueur.largeur-marge,joueur.y1+joueur.hauteur-marge)
         if(abs(this.y1-joueur.y1) < joueur.taillejoueur){
             if(this.r.intersect(joueur.r)){
-                //Code pour mort du joueur
+                //Code pour mort du joueur, le jeu se réinitialise
+                joueur.deadSound.start()
+                joueur.alive = false
             }
             }
         }

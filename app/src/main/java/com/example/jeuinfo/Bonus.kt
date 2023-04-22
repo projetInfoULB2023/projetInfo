@@ -10,7 +10,7 @@ class Bonus(x1:Float,
             private val vitesse:Float,
             private val width:Float,
             image: Bitmap
-): Element(x1,y1,largeur,hauteur, image),Deplacable,CollisionImportante {
+): Element(x1,y1,largeur,hauteur, image),Deplacable {
     override var imageSetup = false
     private var dx = if(Random.nextFloat()>0.5) 1 else -1
 
@@ -22,10 +22,6 @@ class Bonus(x1:Float,
     }
 
     override fun setupImage() {
-        TODO("Not yet implemented")
-    }
-
-    override fun collision(joueur: Joueur) {
         TODO("Not yet implemented")
     }
 }
