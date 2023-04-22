@@ -108,7 +108,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private fun autoGen(){
         //Analyse la position en y du premier élément pour déterminer quand générer la suite
         for (el in decor){
-            if(el.y1==0F){
+            if(-tailleJoueur<el.y1 && el.y1 < tailleJoueur){
                 if(counter%2 == 0){
                     //On génère une ligne d'herbe
                     val herbe = Obstacle(0F,-2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,herbeImage)
