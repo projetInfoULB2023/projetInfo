@@ -107,7 +107,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
 
     private fun autoGen(){
         //Analyse la position en y du premier élément pour déterminer quand générer la suite
-        if(time*Element.vitesseCam>=tailleJoueur*2){
+        if(time*Element.vitesseCam+2>=tailleJoueur*2){
             //On trouve la position de l'élement le plus haut sur l'écran pour positionner le suivant en fonction de cela
             var lowestEl = decor[0]
             for(el in decor){
