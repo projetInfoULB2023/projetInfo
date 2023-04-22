@@ -14,12 +14,11 @@ open class Obstacle(
 ) : Element(x1,y1,largeur,hauteur, image) {
     val width = width
     val vitesse = vitesse
-    open var dx = if(Random.nextFloat() > 0.5) 1 else -1
     var imageSetup = false
 
     private fun setupImage(){
         //flip l'image si l'obstacle recule (cohérence de la tete du camion)
-        if(dx==-1){
+        if(vitesse<0){
             val matrix = Matrix().apply { postScale(-1f, 1f, image.width.toFloat() / 2f, image.height.toFloat() / 2f) }
             this.image = Bitmap.createBitmap(this.image, 0, 0, image.width, image.height, matrix, true)
         }
@@ -34,15 +33,14 @@ open class Obstacle(
         //this.x1 += dx*vitesse
 
         //Permet la réapparition de l'autre coté de l'écran
-        if(this.x1>=width && dx > 0){
+        if(this.x1>=width && vitesse > 0){
             this.x1=-largeur
         }
-        else if(this.x1+largeur< 0 && dx <0){
+        else if(this.x1+largeur< 0 && vitesse <0){
             this.x1 = width
         }
-
-        this.r.offset(dx*vitesse,0F)
-        this.x1 +=dx*vitesse
+        this.r.offset(vitesse,0F)
+        this.x1 += vitesse
     }
 
     override fun avance(canvas: Canvas) {

@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.RectF
 import android.media.MediaPlayer
+import java.util.ArrayList
 import kotlin.math.abs
 
 class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,width:Float,height:Float,
@@ -22,10 +23,10 @@ class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,width:Float,height:Fl
         }
         if(this.y1 + hauteur > height){
             this.y1 -= taillejoueur*2
-            deadSound.start()
+            //deadSound.start()
         }
     }
-    fun collision(elements:ArrayList<Element>,direction:Int,saut:Float){
+    fun collision(elements: ArrayList<Element>, direction:Int, saut:Float){
         this.r= RectF(x1+marge,y1+marge,x1+largeur-marge,y1+hauteur-marge)
         for(obstacle in elements){
             //Vérification uniquement si le joueur est sur la ligne de l'obstacle, sinon pas nécessaire => fait gagner en performance
@@ -39,10 +40,11 @@ class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,width:Float,height:Fl
                             2 -> this.x1 += saut
                             3 -> this.x1 -= saut
                         }
+                    }else if (obstacle is Obstacle){
+
                     }
                 }
             }
         }
-
     }
-}
+    }

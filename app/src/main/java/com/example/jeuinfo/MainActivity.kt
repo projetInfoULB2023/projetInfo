@@ -42,23 +42,15 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-
-
     override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
         Element.vitesseCam = 0F
         return super.onMenuOpened(featureId, menu)
     }
 
-
-
-
     override fun onPanelClosed(featureId: Int, menu: Menu) {
         if(menuTest == 0) Element.vitesseCam = vitesseTemp
         super.onPanelClosed(featureId, menu)
     }
-
-
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.about -> {
@@ -74,13 +66,6 @@ class MainActivity : AppCompatActivity() {
                         menuTest = 0
                     })
                 }
-                /*
-                builder.setNeutralButton("return") {
-                    dialogInterface, which ->
-                    Toast.makeText(applicationContext, "clicked return", Toast.LENGTH_LONG).show()
-                    //Element.vitesseCam = vitesseTemp
-                }
-                */
                 val alertDialog: AlertDialog = builder.create()
                 alertDialog.show()
             }
