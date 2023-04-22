@@ -66,6 +66,8 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private var textPaint = Paint()
     private var compteurMort = 0
     private var deadScreen=false
+    private var sonMonstre = Son(context,R.raw.grognement)
+    private var sonMusique = Son(context,R.raw.musiquefond)
     private fun draw(){
         if(holder.surface.isValid){
             canvas =holder.lockCanvas()
@@ -77,8 +79,6 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 drawObstacles()
                 drawPlayer()
                 setup = true
-                sonMonstre.setVolume(0F)
-                sonMonstre.start()
             }
             if(joueur.alive) tickGame()
             else mort()
@@ -86,11 +86,10 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             holder.unlockCanvasAndPost(canvas)
             }
     }
-    private var sonMonstre = Son(context,R.raw.grognement)
     private fun mort(){
         //On reinitialise la partie
         if (!deadScreen){
-            sonMonstre.setVolume(1F)
+            sonMusique.stop()
             sonMonstre.start()
             joueur.deadSound.start()
             obstacles.clear()
@@ -110,6 +109,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
 
     }
     private fun setupVariables(){
+        sonMusique.start()
         time = 200
         compteurMort=0
         backgroundPaint.color= Color.WHITE
