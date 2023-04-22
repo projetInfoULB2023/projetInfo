@@ -8,13 +8,11 @@ import android.media.MediaPlayer
 import java.util.ArrayList
 import kotlin.math.abs
 
-class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,width:Float,height:Float,
-             taillejoueur:Float,deadSound:MediaPlayer,image:Bitmap)
+class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,private val width:Float,private val height:Float,
+             private val taillejoueur:Float,private val deadSound:Son,image:Bitmap)
     : Element(x1,y1,largeur,hauteur,image) {
-    private val width = width
-    private val taillejoueur= taillejoueur
-    private val height = height
-    private val deadSound = deadSound
+    //Association avec le deadSound:Son
+
     fun detectSortieEcran(){
         if(this.x1 + largeur > width){
             this.x1 = width - largeur
@@ -23,7 +21,7 @@ class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,width:Float,height:Fl
         }
         if(this.y1 + hauteur > height){
             this.y1 -= taillejoueur*2
-            //deadSound.start()
+            deadSound.start()
         }
     }
     fun collision(elements: ArrayList<Element>, direction:Int, saut:Float){

@@ -2,7 +2,6 @@ package com.example.jeuinfo
 
 import android.content.Context
 import android.graphics.*
-import android.media.MediaPlayer
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
@@ -18,7 +17,7 @@ import kotlin.math.abs
 //Génération automatique et aléatoire d'obstacles
 //Ajout différents personnages
 
-class DrawingView @JvmOverloads constructor (context: Context, attributes: AttributeSet? = null, defStyleAttr: Int = 0): SurfaceView(context, attributes,defStyleAttr),
+class DrawingView @JvmOverloads constructor (private var context: Context, attributes: AttributeSet? = null, defStyleAttr: Int = 0): SurfaceView(context, attributes,defStyleAttr),
     SurfaceHolder.Callback,Runnable {
     private var deviceHeight = 0
     private var deviceWidth = 0
@@ -40,7 +39,6 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private var elements = ArrayList<Element>()
     private var decor = ArrayList<Element>()
     private lateinit var joueur: Joueur
-    private lateinit var music1 : MediaPlayer
     private var reste = 0F
 
     private var routeImage = BitmapFactory.decodeResource(resources,R.drawable.route)
@@ -104,7 +102,6 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         joueur.detectSortieEcran()
         joueur.avance(canvas)
     }
-
     private fun autoGen(){
         //Analyse la position en y du premier élément pour déterminer quand générer la suite
         if(time*Element.vitesseCam+2>=tailleJoueur*2){
@@ -326,15 +323,12 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         }
     }
 
-    fun getMediaPlayer(music:MediaPlayer){
-        music1 = music
-    }
-
     private fun drawPlayer(){
+        val deadSound = Son(context,R.raw.mort)
         //alligne le joueur et les obstacles
         posJoueur= arrayOf(width/12*7F-tailleJoueur,tailleJoueur*35)
         joueur = Joueur((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),tailleJoueur*2,
-            tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,music1,BitmapFactory.decodeResource(resources,R.drawable.bersini))
+            tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,deadSound,BitmapFactory.decodeResource(resources,R.drawable.bersini))
     }
 
     fun pause(){
