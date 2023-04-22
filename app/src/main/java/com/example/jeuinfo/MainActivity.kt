@@ -90,7 +90,6 @@ class MainActivity : AppCompatActivity() {
 
 
     override fun onResume() {
-        Element.vitesseCam = 1F
         super.onResume()
         drawingView.resume()
     }
