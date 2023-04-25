@@ -158,7 +158,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private fun autoGen(){
         //Analyse la position en y du premier élément pour déterminer quand générer la suite
         if(time*Element.vitesseCam+2>=tailleJoueur*2){
-            if(random.nextFloat()>0.98){
+            if(random.nextFloat()>0.95){
                 lateinit var objTemp:Bonus
                 if(random.nextFloat()>0.2){
                     objTemp=BonusVie(width*random.nextFloat()-tailleJoueur*2,height*random.nextFloat()-tailleJoueur*2,tailleJoueur*3,tailleJoueur*3,

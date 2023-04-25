@@ -24,7 +24,7 @@ class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,private val width:Flo
                 this.deadSound.start()
                 this.alive = false
             }else if(this.y1 < 0){
-                this.y1 -=DrawingView.saut*2
+                this.y1 +=DrawingView.saut*2
             }
         }
         fun mort(){
@@ -32,12 +32,12 @@ class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,private val width:Flo
             for(bonus in bonuses){
                 if(bonus is BonusVie){
                     delItem=bonus
-                    this.y1+=hauteur
                     lives-=1
                 }
             }
             try {
                 bonuses.remove(delItem)
+                this.y1+=hauteur
             }catch(e:UninitializedPropertyAccessException){
                 this.alive = false
             }
