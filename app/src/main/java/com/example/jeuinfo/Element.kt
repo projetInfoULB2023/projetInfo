@@ -6,7 +6,7 @@ import android.graphics.*
 open class Element(x1:Float, y1:Float, largeur:Float,hauteur:Float,image:Bitmap) {
     private val paint = Paint()
     companion object {
-        var vitesseCam = 4F
+        var vitesseCam = 0F
     }
     var image = image
     var x1: Float= x1

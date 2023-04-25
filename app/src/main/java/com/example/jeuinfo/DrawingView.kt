@@ -266,7 +266,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     }
     private fun drawObstacles(){
         //Génération aléatoire d'obstacles
-        for (i in 0..(height/60).toInt() step 4){
+        for (i in 0..(height/tailleJoueur*2).toInt() step 4){
             var r = random.nextInt(3)
             lateinit var obstacleTemp :Vehicule
             var larg = 0F
