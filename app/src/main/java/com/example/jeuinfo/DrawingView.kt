@@ -54,9 +54,11 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private var busScolaire=BitmapFactory.decodeResource(resources,R.drawable.bus_scolaire,options)
     private var camionBleu = BitmapFactory.decodeResource(resources,R.drawable.camion_bleu)
     private var camionRouge = BitmapFactory.decodeResource(resources,R.drawable.camion_rouge)
+
     private var startingPos =0F
     private var time =0
     private var cancelUp=false
+
     //Entrée touche
     var x1=0F
     var x2=0F
@@ -105,12 +107,10 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         }
         textPaint.textSize = width/6F
         textPaint.textSize = width/15F
-        canvas?.drawText("TY E MOO' !",width/2F,height/2F-20,textPaint)
+        canvas?.drawText("TY E MOO' !",width/2F-width/5,height/2F-20,textPaint)
         canvas?.drawText("Clique sur l'écran pour rejouer",width/15F,height/2F+height/10,textPaint)
         compteurMort+=1
-
     }
-
     private fun setupVariables(){
         sonMusique.start()
         time = 200
@@ -118,12 +118,11 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         tailleJoueur=width/24F
         saut = tailleJoueur*2F
         reste=tailleJoueur*36%tailleJoueur
-        startingPos = tailleJoueur*((height/tailleJoueur).toInt()-16)
+        startingPos = tailleJoueur*((height/tailleJoueur).toInt()-15)
         //decor
         routeImage=Bitmap.createScaledBitmap(routeImage,width,tailleJoueur.toInt()*2,true)
         herbeImage=Bitmap.createScaledBitmap(herbeImage,width,tailleJoueur.toInt()*2,true)
     }
-
     private fun tickGame(){
         autoGen()
         for(obs in decor) obs.avance(canvas)
@@ -358,7 +357,6 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             }
         }
     }
-
     private fun drawPlayer(){
         val deadSound = Son(context,R.raw.mort)
         //alligne le joueur et les obstacles
@@ -366,23 +364,19 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         joueur = Joueur((posJoueur[0]-tailleJoueur),(posJoueur[1]+tailleJoueur),tailleJoueur*2,
             tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,deadSound,BitmapFactory.decodeResource(resources,R.drawable.bersini))
     }
-
     fun pause(){
         drawing = false
         thread.join()
     }
-
     fun resume(){
         drawing = true
         thread=Thread(this)
         thread.start()
     }
-
     fun getDimensions(deviceW:Int,deviceH:Int){
         deviceWidth=deviceW
         deviceHeight=deviceH
     }
-
     override fun onTouchEvent(e: MotionEvent): Boolean {
         //S'active quand l'écran est touché
         when(e.action){
@@ -432,7 +426,6 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         }
         return true
     }
-
     override fun run() {
         while(drawing){
             draw()
