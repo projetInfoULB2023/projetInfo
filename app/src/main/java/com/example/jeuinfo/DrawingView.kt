@@ -15,8 +15,7 @@ import kotlin.math.abs
 
 //Eventuellement penser à des pouvoirs (blocs à récupérer pour avoir une vie en plus,sauter plus loin, détruire un obstacle, ...)
 //Ajout différents personnages
-//Mort quand écrasé par véhicules (collisions mortelles)
-//Rien quand tente d'avancer sur un cailloux
+//Fleche clignottante pret du joueur au début, les gens n'ont pas l'air de comprendre ou et qui est le joueur
 
 class DrawingView @JvmOverloads constructor (private var context: Context, attributes: AttributeSet? = null, defStyleAttr: Int = 0): SurfaceView(context, attributes,defStyleAttr),
     SurfaceHolder.Callback,Runnable {
@@ -55,9 +54,9 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private var busScolaire=BitmapFactory.decodeResource(resources,R.drawable.bus_scolaire,options)
     private var camionBleu = BitmapFactory.decodeResource(resources,R.drawable.camion_bleu)
     private var camionRouge = BitmapFactory.decodeResource(resources,R.drawable.camion_rouge)
-    private var monstre = BitmapFactory.decodeResource(resources,R.drawable.monstre)
     private var startingPos =0F
     private var time =0
+    private var cancelUp=false
     //Entrée touche
     var x1=0F
     var x2=0F
@@ -65,9 +64,9 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     var y2=0F
     private var textPaint = Paint()
     private var compteurMort = 0
-    private var deadScreen=false
-    private var sonMonstre = Son(context,R.raw.grognement)
+    private var deadScreen=true
     private var sonMusique = Son(context,R.raw.musiquefond)
+    private var ready=true
     private fun draw(){
         if(holder.surface.isValid){
             canvas =holder.lockCanvas()
@@ -80,7 +79,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 drawPlayer()
                 setup = true
             }
-            if(joueur.alive) tickGame()
+            if(joueur.alive && ready) tickGame()
             else mort()
             //Fin code pour dessiner
             holder.unlockCanvasAndPost(canvas)
@@ -88,32 +87,33 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     }
     private fun mort(){
         //On reinitialise la partie
-        if (!deadScreen){
+        if (deadScreen){
             sonMusique.stop()
-            sonMonstre.start()
             joueur.deadSound.start()
             obstacles.clear()
             decor.clear()
-            deadScreen=true
+            deadScreen=false
             backgroundPaint.color=Color.RED
             textPaint.color=Color.BLACK
+            ready=false
         }
-        compteurMort+=1
+        if(compteurMort==2) {
+            drawObstacles()
+            drawPlayer()
+            backgroundPaint.color = Color.GREEN
+        }
         textPaint.textSize = width/6F
-        canvas?.drawText("TY E MOO' !",width/2F-width/2.3F,height/2F-20,textPaint)
         textPaint.textSize = width/15F
+        canvas?.drawText("TY E MOO' !",width/2F,height/2F-20,textPaint)
         canvas?.drawText("Clique sur l'écran pour rejouer",width/15F,height/2F+height/10,textPaint)
-        canvas?.drawBitmap(monstre,null,Rect(0,0,width,height),backgroundPaint)
-        if(compteurMort>80)
-            backgroundPaint.color=Color.GREEN
+        compteurMort+=1
 
     }
+
     private fun setupVariables(){
         sonMusique.start()
         time = 200
         compteurMort=0
-        backgroundPaint.color= Color.WHITE
-        deadScreen=false
         tailleJoueur=width/24F
         saut = tailleJoueur*2F
         reste=tailleJoueur*36%tailleJoueur
@@ -121,7 +121,6 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         //decor
         routeImage=Bitmap.createScaledBitmap(routeImage,width,tailleJoueur.toInt()*2,true)
         herbeImage=Bitmap.createScaledBitmap(herbeImage,width,tailleJoueur.toInt()*2,true)
-        monstre=Bitmap.createScaledBitmap(monstre,width,height,true)
     }
 
     private fun tickGame(){
@@ -388,41 +387,46 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         when(e.action){
             MotionEvent.ACTION_DOWN ->{
                 x1 = e.rawX; y1=e.rawY
-                println(compteurMort)
-                if (compteurMort>80){
-                    joueur.alive = true
-                    setup = false
+                if (compteurMort>2){
+                    ready=true
+                    deadScreen =true
+                    sonMusique.start()
+                    time=200
+                    compteurMort=0
+                    cancelUp=true
                 }
             }
             MotionEvent.ACTION_UP -> {
-                x2=e.rawX;y2=e.rawY
-                //Direction de swipe
-                if(abs(x2-x1) > abs(y2-y1)){
-                    //Mouvement horizontal, reste à déterminer gauche ou droite
-                    if(x2-x1 > 0){
-                        //Droite
-                        joueur.x1 += saut
-                        direction=3
+                if(!cancelUp){
+                    x2=e.rawX;y2=e.rawY
+                    //Direction de swipe
+                    if(abs(x2-x1) > abs(y2-y1)){
+                        //Mouvement horizontal, reste à déterminer gauche ou droite
+                        if(x2-x1 > 0){
+                            //Droite
+                            joueur.x1 += saut
+                            direction=3
+                        }else{
+                            //Gauche
+                            joueur.x1 -= saut
+                            direction=2
+                        }
                     }else{
-                        //Gauche
-                        joueur.x1 -= saut
-                        direction=2
+                        //Mouvement vertical, reste à déterminer haut ou bas
+                        if(y2-y1 > 0){
+                            //Bas
+                            joueur.y1 += saut
+                            direction=1
+                        }else {
+                            //Haut
+                            joueur.y1 -= saut
+                            direction=0
+                        }
                     }
-                }else{
-                    //Mouvement vertical, reste à déterminer haut ou bas
-                    if(y2-y1 > 0){
-                        //Bas
-                        joueur.y1 += saut
-                        direction=1
-                    }else {
-                        //Haut
-                        joueur.y1 -= saut
-                        direction=0
+                    for(obs in obstacles){
+                        if(obs is CollisionSimple) obs.collision(joueur,direction,saut)
                     }
-                }
-                for(obs in obstacles){
-                    if(obs is CollisionSimple) obs.collision(joueur,direction,saut)
-                }
+                }else cancelUp=false
             }
         }
         return true
