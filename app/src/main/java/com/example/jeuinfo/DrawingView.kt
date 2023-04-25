@@ -118,7 +118,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         tailleJoueur=width/24F
         saut = tailleJoueur*2F
         reste=tailleJoueur*36%tailleJoueur
-        startingPos = tailleJoueur*((height/tailleJoueur).toInt()-15)
+        startingPos = tailleJoueur*((height/tailleJoueur).toInt()-16)
         //decor
         routeImage=Bitmap.createScaledBitmap(routeImage,width,tailleJoueur.toInt()*2,true)
         herbeImage=Bitmap.createScaledBitmap(herbeImage,width,tailleJoueur.toInt()*2,true)
@@ -266,7 +266,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     }
     private fun drawObstacles(){
         //Génération aléatoire d'obstacles
-        for (i in 0..(height/tailleJoueur).toInt() step 4){
+        for (i in 0..(height/60).toInt() step 4){
             var r = random.nextInt(3)
             lateinit var obstacleTemp :Vehicule
             var larg = 0F
