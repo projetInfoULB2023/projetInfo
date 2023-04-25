@@ -67,6 +67,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private var deadScreen=true
     private var sonMusique = Son(context,R.raw.musiquefond)
     private var ready=true
+
     private fun draw(){
         if(holder.surface.isValid){
             canvas =holder.lockCanvas()
@@ -117,7 +118,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         tailleJoueur=width/24F
         saut = tailleJoueur*2F
         reste=tailleJoueur*36%tailleJoueur
-        startingPos = tailleJoueur*((height/tailleJoueur).toInt()-8)
+        startingPos = tailleJoueur*((height/tailleJoueur).toInt()-16)
         //decor
         routeImage=Bitmap.createScaledBitmap(routeImage,width,tailleJoueur.toInt()*2,true)
         herbeImage=Bitmap.createScaledBitmap(herbeImage,width,tailleJoueur.toInt()*2,true)
