@@ -2,7 +2,6 @@ package com.example.jeuinfo
 
 import android.content.Context
 import android.graphics.*
-import android.media.MediaPlayer
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.SurfaceHolder
@@ -15,10 +14,11 @@ import kotlin.math.abs
 //Etapes importantes
 
 //Eventuellement penser à des pouvoirs (blocs à récupérer pour avoir une vie en plus,sauter plus loin, détruire un obstacle, ...)
-//Génération automatique et aléatoire d'obstacles
 //Ajout différents personnages
+//Mort quand écrasé par véhicules (collisions mortelles)
+//Rien quand tente d'avancer sur un cailloux
 
-class DrawingView @JvmOverloads constructor (context: Context, attributes: AttributeSet? = null, defStyleAttr: Int = 0): SurfaceView(context, attributes,defStyleAttr),
+class DrawingView @JvmOverloads constructor (private var context: Context, attributes: AttributeSet? = null, defStyleAttr: Int = 0): SurfaceView(context, attributes,defStyleAttr),
     SurfaceHolder.Callback,Runnable {
     private var deviceHeight = 0
     private var deviceWidth = 0
@@ -32,15 +32,11 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private var direction = 0
     private var tailleJoueur = 0F
     private var saut = 0F
-    private var paint = Paint()
-    private val blue = Color.BLUE
-    private val red = Color.RED
     private lateinit var posJoueur:Array<Float>
     private var setup = false
-    private var elements = ArrayList<Element>()
+    private var obstacles = mutableListOf<Element>()
     private var decor = ArrayList<Element>()
     private lateinit var joueur: Joueur
-    private lateinit var music1 : MediaPlayer
     private var reste = 0F
 
     private var routeImage = BitmapFactory.decodeResource(resources,R.drawable.route)
@@ -59,20 +55,23 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     private var busScolaire=BitmapFactory.decodeResource(resources,R.drawable.bus_scolaire,options)
     private var camionBleu = BitmapFactory.decodeResource(resources,R.drawable.camion_bleu)
     private var camionRouge = BitmapFactory.decodeResource(resources,R.drawable.camion_rouge)
-
-    private var counter =0
-    private var time =200
-
+    private var monstre = BitmapFactory.decodeResource(resources,R.drawable.monstre)
+    private var startingPos =0F
+    private var time =0
     //Entrée touche
     var x1=0F
     var x2=0F
     var y1=0F
     var y2=0F
+    private var textPaint = Paint()
+    private var compteurMort = 0
+    private var deadScreen=false
+    private var sonMonstre = Son(context,R.raw.grognement)
+    private var sonMusique = Son(context,R.raw.musiquefond)
     private fun draw(){
         if(holder.surface.isValid){
             canvas =holder.lockCanvas()
             //Permet de ne pas acculumer les éléments dessinés
-            backgroundPaint.color= Color.WHITE
             canvas?.drawRect(0F,0F,width.toFloat(),height.toFloat(),backgroundPaint)
             //Code pour dessiner ici
             if(!setup){
@@ -81,30 +80,65 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 drawPlayer()
                 setup = true
             }
-            tickGame()
+            if(joueur.alive) tickGame()
+            else mort()
             //Fin code pour dessiner
             holder.unlockCanvasAndPost(canvas)
             }
     }
+    private fun mort(){
+        //On reinitialise la partie
+        if (!deadScreen){
+            sonMusique.stop()
+            sonMonstre.start()
+            joueur.deadSound.start()
+            obstacles.clear()
+            decor.clear()
+            deadScreen=true
+            backgroundPaint.color=Color.RED
+            textPaint.color=Color.BLACK
+        }
+        compteurMort+=1
+        textPaint.textSize = width/6F
+        canvas?.drawText("TY E MOO' !",width/2F-width/2.3F,height/2F-20,textPaint)
+        textPaint.textSize = width/15F
+        canvas?.drawText("Clique sur l'écran pour rejouer",width/15F,height/2F+height/10,textPaint)
+        canvas?.drawBitmap(monstre,null,Rect(0,0,width,height),backgroundPaint)
+        if(compteurMort>80)
+            backgroundPaint.color=Color.GREEN
+
+    }
     private fun setupVariables(){
+        sonMusique.start()
+        time = 200
+        compteurMort=0
+        backgroundPaint.color= Color.WHITE
+        deadScreen=false
         tailleJoueur=width/24F
         saut = tailleJoueur*2F
         reste=tailleJoueur*36%tailleJoueur
+        startingPos = tailleJoueur*((height/tailleJoueur).toInt()-8)
         //decor
         routeImage=Bitmap.createScaledBitmap(routeImage,width,tailleJoueur.toInt()*2,true)
-        herbeImage=Bitmap.createScaledBitmap(herbeImage,width,tailleJoueur.toInt()*2,false)
-        //vehicules
+        herbeImage=Bitmap.createScaledBitmap(herbeImage,width,tailleJoueur.toInt()*2,true)
+        monstre=Bitmap.createScaledBitmap(monstre,width,height,true)
     }
 
     private fun tickGame(){
         autoGen()
         for(obs in decor) obs.avance(canvas)
-        for(obs in elements) obs.avance(canvas)
-        joueur.collision(elements,direction,saut)
+        for(obs in obstacles) {
+            obs.avance(canvas)
+            if(obs is Deplacable){
+                if(!obs.imageSetup)obs.setupImage()
+                obs.deplacement()
+                if(obs is CollisionMortelle) obs.collision(joueur,obstacles,startingPos)
+            }
+
+        }
         joueur.detectSortieEcran()
         joueur.avance(canvas)
     }
-
     private fun autoGen(){
         //Analyse la position en y du premier élément pour déterminer quand générer la suite
         if(time*Element.vitesseCam+2>=tailleJoueur*2){
@@ -120,9 +154,9 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
             val posLow = lowestEl.y1
             time=0
             //On génère une nouvelle ligne
-            if(counter%2 == 0){
+            if(random.nextFloat()>0.5){
                 //On génère une ligne d'herbe
-                val herbe = Obstacle(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,herbeImage)
+                val herbe = Element(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,herbeImage)
                 //Manipulation pour mettre la nouvelle herbe en première position
                 decor.add(herbe)
                 //Génération cailloux
@@ -132,7 +166,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                     val index = random.nextInt(list.size)
                     val location = list[index]
                     list.remove(location)
-                    lateinit var obstacleTemp: ObstacleFixe
+                    lateinit var obstacleTemp: Cailloux
                     var image = caillouArbre
 
                     //Rocher
@@ -146,23 +180,22 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                         2 -> image = caillouFougere
                         3 -> image = caillouPalmier
                     }
-                    obstacleTemp = ObstacleFixe(
+                    obstacleTemp = Cailloux(
                         (location * tailleJoueur*2),
                         posLow-2 * tailleJoueur,
                         tailleJoueur * larg,
                         tailleJoueur * 2,
-                        width.toFloat(),
                         image
                     )
-                    elements.add(obstacleTemp)
+                    obstacles.add(obstacleTemp)
                 }
             }else{
             //On génère une ligne de route
-            val route = Obstacle(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
+            val route = Element(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,routeImage)
             decor.add(route)
             //Génération de véhicules
             var r = random.nextInt(3)
-            lateinit var obstacleTemp :Obstacle
+            lateinit var obstacleTemp :Vehicule
             var larg = 0F
             var speed = 0F
             var image = caillouArbre
@@ -205,9 +238,10 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                         image = busScolaire
                         }
                     }
-                    obstacleTemp = Obstacle(location*tailleJoueur*2,posLow-2*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
+                    obstacleTemp = Vehicule(location*tailleJoueur*2,posLow-2*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
                         width.toFloat(),image)
-                    elements.add(obstacleTemp)
+
+                    obstacles.add(obstacleTemp)
                     vehiList.remove(location)
 
                 }
@@ -225,9 +259,9 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
             if (removable) decor.remove(delItem)
             var delItems=ArrayList<Element>()
             //Ensuite les véhicules
-            for(el in elements) if(el.y1 > height+tailleJoueur*2) delItems.add(el)
-            for(el in delItems) elements.remove(el)
-            counter+=1
+            for(el in obstacles) if(el.y1 > height+tailleJoueur*2) delItems.add(el)
+            for(el in delItems) obstacles.remove(el)
+
         }
         time+=1
     }
@@ -235,7 +269,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
         //Génération aléatoire d'obstacles
         for (i in 0..(height/tailleJoueur).toInt() step 4){
             var r = random.nextInt(3)
-            lateinit var obstacleTemp :Obstacle
+            lateinit var obstacleTemp :Vehicule
             var larg = 0F
             var speed = 0F
             var path = 0
@@ -280,15 +314,15 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                         path=R.drawable.bus_scolaire
                     }
                 }
-                obstacleTemp = Obstacle(location*tailleJoueur*2,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
+                obstacleTemp = Vehicule(location*tailleJoueur*2,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
                     width.toFloat(),BitmapFactory.decodeResource(resources,path))
-                elements.add(obstacleTemp)
+                obstacles.add(obstacleTemp)
             }
 
             //Génération lignes de terrain
-            val herbe = Obstacle(0F,(i+2)*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,herbeImage)
+            val herbe = Element(0F,(i+2)*tailleJoueur,width.toFloat(),tailleJoueur*2 ,herbeImage)
             decor.add(herbe)
-            val route = Obstacle(0F,i*tailleJoueur,width.toFloat(),tailleJoueur*2,0F,width.toFloat() ,routeImage)
+            val route = Element(0F,i*tailleJoueur,width.toFloat(),tailleJoueur*2,routeImage)
             decor.add(route)
 
             //Génération cailloux
@@ -298,7 +332,7 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                 val index = random.nextInt(caiList.size)
                 val location = caiList[index]
                 caiList.remove(location)
-                lateinit var obstacleTemp: ObstacleFixe
+                lateinit var obstacleTemp: Cailloux
                 var path = 0
 
                 //Rocher
@@ -313,28 +347,24 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                     2 -> path = R.drawable.caillou_fougere
                     3 -> path = R.drawable.caillou_palmier
                 }
-                obstacleTemp = ObstacleFixe(
+                obstacleTemp = Cailloux(
                     (location * tailleJoueur*2),
                     (i+2) * tailleJoueur,
                     tailleJoueur * larg,
                     tailleJoueur * 2,
-                    width.toFloat(),
                     BitmapFactory.decodeResource(resources, path)
                 )
-                elements.add(obstacleTemp)
+                obstacles.add(obstacleTemp)
             }
         }
     }
 
-    fun getMediaPlayer(music:MediaPlayer){
-        music1 = music
-    }
-
     private fun drawPlayer(){
+        val deadSound = Son(context,R.raw.mort)
         //alligne le joueur et les obstacles
-        posJoueur= arrayOf(width/12*7F-tailleJoueur,tailleJoueur*35)
-        joueur = Joueur((posJoueur[0]-tailleJoueur).toFloat(),(posJoueur[1]+tailleJoueur).toFloat(),tailleJoueur*2,
-            tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,music1,BitmapFactory.decodeResource(resources,R.drawable.bersini))
+        posJoueur= arrayOf(width/12*7F-tailleJoueur,startingPos)
+        joueur = Joueur((posJoueur[0]-tailleJoueur),(posJoueur[1]+tailleJoueur),tailleJoueur*2,
+            tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,deadSound,BitmapFactory.decodeResource(resources,R.drawable.bersini))
     }
 
     fun pause(){
@@ -356,7 +386,14 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
     override fun onTouchEvent(e: MotionEvent): Boolean {
         //S'active quand l'écran est touché
         when(e.action){
-            MotionEvent.ACTION_DOWN ->{ x1 = e.rawX; y1=e.rawY}
+            MotionEvent.ACTION_DOWN ->{
+                x1 = e.rawX; y1=e.rawY
+                println(compteurMort)
+                if (compteurMort>80){
+                    joueur.alive = true
+                    setup = false
+                }
+            }
             MotionEvent.ACTION_UP -> {
                 x2=e.rawX;y2=e.rawY
                 //Direction de swipe
@@ -382,6 +419,9 @@ class DrawingView @JvmOverloads constructor (context: Context, attributes: Attri
                         joueur.y1 -= saut
                         direction=0
                     }
+                }
+                for(obs in obstacles){
+                    if(obs is CollisionSimple) obs.collision(joueur,direction,saut)
                 }
             }
         }
