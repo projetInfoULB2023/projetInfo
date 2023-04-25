@@ -3,16 +3,14 @@ package com.example.jeuinfo
 import android.graphics.*
 
 
-open class Element(x1:Float, y1:Float, largeur:Float,hauteur:Float,image:Bitmap) {
+open class Element(x1:Float, y1:Float, var largeur:Float,var hauteur:Float,image:Bitmap) {
     private val paint = Paint()
     companion object {
-        var vitesseCam = 0F
+        var vitesseCam = 4F
     }
     var image = image
     var x1: Float= x1
     var y1: Float= y1
-    var largeur: Float = largeur
-    var hauteur : Float = hauteur
     var r = RectF(x1,x1+largeur,y1,y1 + hauteur)
     private var dy= 1
     protected val marge =3
