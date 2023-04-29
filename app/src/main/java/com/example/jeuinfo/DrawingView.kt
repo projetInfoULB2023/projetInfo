@@ -10,9 +10,6 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.abs
 
-
-//Etapes importantes
-
 class DrawingView @JvmOverloads constructor (private var context: Context, attributes: AttributeSet? = null, defStyleAttr: Int = 0): SurfaceView(context, attributes,defStyleAttr),
     SurfaceHolder.Callback,Runnable {
     private var deviceHeight = 0
@@ -124,7 +121,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         tailleJoueur=width/24F
         saut = tailleJoueur*2F
         reste=tailleJoueur*36%tailleJoueur
-        startingPos = tailleJoueur*((height/tailleJoueur).toInt()-16)
+        startingPos = tailleJoueur*17
         //decor
         routeImage=Bitmap.createScaledBitmap(routeImage,width,tailleJoueur.toInt()*2,true)
         herbeImage=Bitmap.createScaledBitmap(herbeImage,width,tailleJoueur.toInt()*2,true)
