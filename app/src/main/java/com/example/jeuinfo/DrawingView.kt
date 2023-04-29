@@ -109,7 +109,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             backgroundPaint.color = Color.GREEN
         }
         textPaint.textSize = width/6F
-        canvas.drawText(score.toString(),width/2F-width/20,height/2F-20,textPaint)
+        canvas.drawText(score.toString(),width/2F-width/18,height/2F-20,textPaint)
         textPaint.textSize = width/15F
         canvas.drawText("Clique sur l'écran pour rejouer",width/15F,height/2F+height/10,textPaint)
         compteurMort+=1
