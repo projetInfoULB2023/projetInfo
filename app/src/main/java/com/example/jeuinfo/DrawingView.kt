@@ -13,10 +13,6 @@ import kotlin.math.abs
 
 //Etapes importantes
 
-//Eventuellement penser à des pouvoirs (blocs à récupérer pour avoir une vie en plus,sauter plus loin, détruire un obstacle, ...)
-//Ajout différents personnages
-//Fleche clignottante pret du joueur au début, les gens n'ont pas l'air de comprendre ou et qui est le joueur
-
 class DrawingView @JvmOverloads constructor (private var context: Context, attributes: AttributeSet? = null, defStyleAttr: Int = 0): SurfaceView(context, attributes,defStyleAttr),
     SurfaceHolder.Callback,Runnable {
     private var deviceHeight = 0
@@ -30,6 +26,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     lateinit var thread:Thread
     private var direction = 0
     private var tailleJoueur = 0F
+    private var manager = Manager()
     private lateinit var posJoueur:Array<Float>
     private var setup = false
     private var decor = ArrayList<Element>()
@@ -80,7 +77,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         if(holder.surface.isValid){
             canvas =holder.lockCanvas()
             //Permet de ne pas acculumer les éléments dessinés
-            canvas?.drawRect(0F,0F,width.toFloat(),height.toFloat(),backgroundPaint)
+            canvas.drawRect(0F,0F,width.toFloat(),height.toFloat(),backgroundPaint)
             //Code pour dessiner ici
             if(!setup){
                 setupVariables()
@@ -101,6 +98,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             joueur.deadSound.start()
             obstacles.clear()
             decor.clear()
+            manager.clear()
             deadScreen=false
             backgroundPaint.color=Color.RED
             textPaint.color=Color.BLACK
@@ -113,8 +111,8 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         }
         textPaint.textSize = width/6F
         textPaint.textSize = width/15F
-        canvas?.drawText("TY E MOO' !",width/2F-width/5,height/2F-20,textPaint)
-        canvas?.drawText("Clique sur l'écran pour rejouer",width/15F,height/2F+height/10,textPaint)
+        canvas.drawText("TY E MOO' !",width/2F-width/5,height/2F-20,textPaint)
+        canvas.drawText("Clique sur l'écran pour rejouer",width/15F,height/2F+height/10,textPaint)
         compteurMort+=1
     }
     private fun setupVariables(){
@@ -133,9 +131,10 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     }
     private fun tickGame(){
         autoGen()
-        for(obs in decor) obs.avance(canvas)
+        manager.updateObs(canvas)
+        //for(obs in decor) obs.avance(canvas)
         for(obs in obstacles) {
-            obs.avance(canvas)
+          //  obs.avance(canvas)
             if(obs is Deplacable){
                 obs.deplacement()
                 if(obs is CollisionMortelle) obs.collision(joueur,startingPos)
@@ -144,6 +143,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         }
         for(obs in toBeRemoved){
             obstacles.remove(obs)
+            manager.remove(obs)
         }
         toBeRemoved.clear()
         joueur.detectSortieEcran()
@@ -153,7 +153,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private fun drawLives(){
         livesPaint.color=Color.WHITE
         livesPaint.textSize=width/20F
-        canvas?.drawText(joueur.lives.toString(),width/15F,height/20F,livesPaint)
+        canvas.drawText(joueur.lives.toString(),width/15F,height/20F,livesPaint)
     }
     private fun autoGen(){
         //Analyse la position en y du premier élément pour déterminer quand générer la suite
@@ -168,6 +168,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                         6*random.nextFloat(),6*random.nextFloat(),chaussures)
                 }
                 obstacles.add(objTemp)
+                manager.addObs(objTemp)
             }
             //On trouve la position de l'élement le plus haut sur l'écran pour positionner le suivant en fonction de cela
             var lowestEl = decor[0]
@@ -186,9 +187,10 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 val herbe = Element(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,herbeImage)
                 //Manipulation pour mettre la nouvelle herbe en première position
                 decor.add(herbe)
+                manager.addObs(0,herbe)
                 //Génération cailloux
                 val x = random.nextInt(maxCailloux)
-                var list = mutableListOf(0,1,2,3,4,5,6,7,8,9,10,11)
+                val list = mutableListOf(0,1,2,3,4,5,6,7,8,9,10,11)
                 for (j in 0..x) {
                     val index = random.nextInt(list.size)
                     val location = list[index]
@@ -215,21 +217,23 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                         image
                     )
                     obstacles.add(obstacleTemp)
+                    manager.addObs(obstacleTemp)
                 }
             }else{
             //On génère une ligne de route
             val route = Element(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,routeImage)
             decor.add(route)
+            manager.addObs(0,route)
             //Génération de véhicules
-            var r = random.nextInt(3)
+            val r = random.nextInt(3)
             lateinit var obstacleTemp :Vehicule
             var larg = 0F
             var speed = 0F
             var image = caillouArbre
             val z = random.nextInt(maxVoitures)
-            var vehiList = mutableListOf(1,4,7,10)
+            val vehiList = mutableListOf(1,4,7,10)
             //Meme direction pour tous les véhicules de la meme ligne
-            var dx = if(random.nextFloat()> 0.5) 1 else -1
+            val dx = if(random.nextFloat()> 0.5) 1 else -1
             for(j in 0..z) {
                 val index = random.nextInt(vehiList.size)
                 val location = vehiList[index]
@@ -268,6 +272,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                     obstacleTemp = Vehicule(location*tailleJoueur*2,posLow-2*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,image)
 
                     obstacles.add(obstacleTemp)
+                    manager.addObs(obstacleTemp)
                     vehiList.remove(location)
 
                 }
@@ -282,11 +287,17 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                     removable = true
                 }
             }
-            if (removable) decor.remove(delItem)
-            var delItems=ArrayList<Element>()
+            if (removable){
+                decor.remove(delItem)
+                manager.remove(delItem)
+            }
+            val delItems=ArrayList<Element>()
             //Ensuite les véhicules
             for(el in obstacles) if(el.y1 > height+tailleJoueur*2) delItems.add(el)
-            for(el in delItems) obstacles.remove(el)
+            for(el in delItems) {
+                obstacles.remove(el)
+                manager.remove(el)
+            }
 
         }
         time+=1
@@ -294,15 +305,23 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private fun drawObstacles(){
         //Génération aléatoire d'obstacles
         for (i in 0..(height/tailleJoueur+3).toInt() step 4){
-            var r = random.nextInt(3)
+            val r = random.nextInt(3)
             lateinit var obstacleTemp :Vehicule
             var larg = 0F
             var speed = 0F
             var path = 0
             val z = random.nextInt(maxVoitures)
-            var vehiList = mutableListOf(2,5,8,11)
+            val vehiList = mutableListOf(2,5,8,11)
             //Meme direction pour tous les véhicules de la meme ligne
-            var dx = if(random.nextFloat()> 0.5) 1 else -1
+            val dx = if(random.nextFloat()> 0.5) 1 else -1
+
+            //Génération lignes de terrain
+            val herbe = Element(0F,(i+2)*tailleJoueur,width.toFloat(),tailleJoueur*2 ,herbeImage)
+            decor.add(herbe)
+            manager.addObs(0,herbe)
+            val route = Element(0F,i*tailleJoueur,width.toFloat(),tailleJoueur*2,routeImage)
+            decor.add(route)
+            manager.addObs(0,route)
             for(j in 0..z){
                 val index = random.nextInt(vehiList.size)
                 val location = vehiList[index]
@@ -343,17 +362,12 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 obstacleTemp = Vehicule(location*tailleJoueur*2,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
                     BitmapFactory.decodeResource(resources,path))
                 obstacles.add(obstacleTemp)
+                manager.addObs(obstacleTemp)
             }
-
-            //Génération lignes de terrain
-            val herbe = Element(0F,(i+2)*tailleJoueur,width.toFloat(),tailleJoueur*2 ,herbeImage)
-            decor.add(herbe)
-            val route = Element(0F,i*tailleJoueur,width.toFloat(),tailleJoueur*2,routeImage)
-            decor.add(route)
 
             //Génération cailloux
             val x = random.nextInt(maxCailloux)
-            var caiList = mutableListOf(0,1,2,3,4,5,6,7,8,9,10,11)
+            val caiList = mutableListOf(0,1,2,3,4,5,6,7,8,9,10,11)
             for (j in 0..x) {
                 val index = random.nextInt(caiList.size)
                 val location = caiList[index]
@@ -362,7 +376,6 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 var path = 0
 
                 //Rocher
-                val speed = 0F
                 val larg = 2F
 
                 //Détermination type
@@ -381,6 +394,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                     BitmapFactory.decodeResource(resources, path)
                 )
                 obstacles.add(obstacleTemp)
+                manager.addObs(obstacleTemp)
             }
         }
     }

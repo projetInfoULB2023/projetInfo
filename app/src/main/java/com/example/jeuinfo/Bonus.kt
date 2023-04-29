@@ -13,7 +13,7 @@ open class Bonus(x1:Float,
                  val vitesseX:Float,
                  val vitesseY:Float,
                  image: Bitmap
-): Element(x1,y1,largeur,hauteur, image),Deplacable,CollisionDisparition {
+): Element(x1,y1,largeur,hauteur, image),Deplacable {
     private var dx = if(Random.nextFloat()>0.5) 1 else -1
     private var dy = if(Random.nextFloat()>0.5) 1 else -1
     override fun deplacement() {
