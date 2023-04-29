@@ -11,6 +11,7 @@ import kotlin.math.abs
 class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,private val width:Float,private val height:Float,
               val taillejoueur:Float, val deadSound:Son,image:Bitmap)
     : Element(x1,y1,largeur,hauteur,image) {
+
         var alive =true
         var bonuses= mutableListOf<Bonus>()
         var lives=1
@@ -33,6 +34,7 @@ class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,private val width:Flo
                 if(bonus is BonusVie){
                     delItem=bonus
                     lives-=1
+                    break
                 }
             }
             try {
@@ -41,7 +43,6 @@ class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,private val width:Flo
             }catch(e:UninitializedPropertyAccessException){
                 this.alive = false
             }
-
         }
         fun checkBonus(){
             var counter = 1

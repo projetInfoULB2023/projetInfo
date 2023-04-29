@@ -16,9 +16,6 @@ class Son(private val context: Context,private val path:Int) {
         mediaPlayer.start()
 
     }
-    fun setVolume(x:Float){
-        mediaPlayer?.setVolume(x,x)
-    }
     fun stop(){
         mediaPlayer?.stop()
     }
