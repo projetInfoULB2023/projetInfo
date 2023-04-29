@@ -443,7 +443,12 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 if(!cancelUp){
                     x2=e.rawX;y2=e.rawY
                     //Direction de swipe
-                    if(abs(x2-x1) > abs(y2-y1)){
+                    if(abs(x2-x1)<5 && abs(y2-y1)<5){
+                        //On considère un simple click donc un mouvement vers le haut
+                        joueur.y1 -= saut
+                        direction=0
+                        actualScore+=1
+                    } else if(abs(x2-x1) > abs(y2-y1)){
                         //Mouvement horizontal, reste à déterminer gauche ou droite
                         if(x2-x1 > 0){
                             //Droite
