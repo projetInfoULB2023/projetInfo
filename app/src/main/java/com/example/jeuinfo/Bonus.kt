@@ -1,27 +1,35 @@
 package com.example.jeuinfo
 
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.RectF
+import kotlin.math.abs
 import kotlin.random.Random
 
-class Bonus(x1:Float,
-            y1:Float,
-            largeur:Float,
-            hauteur:Float,
-            private val vitesse:Float,
-            private val width:Float,
-            image: Bitmap
-): Element(x1,y1,largeur,hauteur, image),Deplacable {
-    override var imageSetup = false
+open class Bonus(x1:Float,
+                 y1:Float,
+                 largeur:Float,
+                 hauteur:Float,
+                 val vitesseX:Float,
+                 val vitesseY:Float,
+                 image: Bitmap
+): Element(x1,y1,largeur,hauteur, image),Deplacable,CollisionDisparition {
     private var dx = if(Random.nextFloat()>0.5) 1 else -1
-
+    private var dy = if(Random.nextFloat()>0.5) 1 else -1
     override fun deplacement() {
         //Permet le rebond
-        dx = if(this.x1+largeur >= width ) -1 else if (this.x1 <= 0) 1 else dx
-        this.r.offset(dx*vitesse,0F)
-        this.x1 += dx*vitesse
+        if(this.x1+largeur>=DrawingView.Cwidth || this.x1<=0){
+            dx*=-1
+        }
+        if(this.y1 < 0 || this.y1+hauteur > DrawingView.Cheight){
+            dy*=-1
+        }
+        this.r.offset(dx*vitesseX,dy*vitesseY)
+        this.x1+=dx*vitesseX
+        this.y1+=dy*vitesseY
     }
-
-    override fun setupImage() {
-        TODO("Not yet implemented")
+    override fun avance(canvas: Canvas){
+        this.deplacement()
+        super.avance(canvas)
     }
 }

@@ -30,10 +30,8 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     lateinit var thread:Thread
     private var direction = 0
     private var tailleJoueur = 0F
-    private var saut = 0F
     private lateinit var posJoueur:Array<Float>
     private var setup = false
-    private var obstacles = mutableListOf<Element>()
     private var decor = ArrayList<Element>()
     private lateinit var joueur: Joueur
     private var reste = 0F
@@ -54,9 +52,12 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private var busScolaire=BitmapFactory.decodeResource(resources,R.drawable.bus_scolaire,options)
     private var camionBleu = BitmapFactory.decodeResource(resources,R.drawable.camion_bleu)
     private var camionRouge = BitmapFactory.decodeResource(resources,R.drawable.camion_rouge)
+    private var coeur=BitmapFactory.decodeResource(resources,R.drawable.coeur)
+    private var chaussures=BitmapFactory.decodeResource(resources,R.drawable.chaussures)
     private var startingPos =0F
     private var time =0
     private var cancelUp=false
+
     //Entrée touche
     var x1=0F
     var x2=0F
@@ -67,7 +68,14 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private var deadScreen=true
     private var sonMusique = Son(context,R.raw.musiquefond)
     private var ready=true
-
+    private var obstacles = mutableListOf<Element>()
+    private var livesPaint=Paint()
+    companion object {
+        var Cheight =0
+        var Cwidth=0
+        var saut = 0F
+        var toBeRemoved = mutableListOf<Element>()
+    }
     private fun draw(){
         if(holder.surface.isValid){
             canvas =holder.lockCanvas()
@@ -105,13 +113,13 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         }
         textPaint.textSize = width/6F
         textPaint.textSize = width/15F
-        canvas?.drawText("TY E MOO' !",width/2F,height/2F-20,textPaint)
+        canvas?.drawText("TY E MOO' !",width/2F-width/5,height/2F-20,textPaint)
         canvas?.drawText("Clique sur l'écran pour rejouer",width/15F,height/2F+height/10,textPaint)
         compteurMort+=1
-
     }
-
     private fun setupVariables(){
+        Cheight=height
+        Cwidth=width
         sonMusique.start()
         time = 200
         compteurMort=0
@@ -123,25 +131,44 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         routeImage=Bitmap.createScaledBitmap(routeImage,width,tailleJoueur.toInt()*2,true)
         herbeImage=Bitmap.createScaledBitmap(herbeImage,width,tailleJoueur.toInt()*2,true)
     }
-
     private fun tickGame(){
         autoGen()
         for(obs in decor) obs.avance(canvas)
         for(obs in obstacles) {
             obs.avance(canvas)
             if(obs is Deplacable){
-                if(!obs.imageSetup)obs.setupImage()
                 obs.deplacement()
-                if(obs is CollisionMortelle) obs.collision(joueur,obstacles,startingPos)
+                if(obs is CollisionMortelle) obs.collision(joueur,startingPos)
+                if(obs is CollisionDisparition) obs.collision(joueur)
             }
-
         }
+        for(obs in toBeRemoved){
+            obstacles.remove(obs)
+        }
+        toBeRemoved.clear()
         joueur.detectSortieEcran()
         joueur.avance(canvas)
+        drawLives()
+    }
+    private fun drawLives(){
+        livesPaint.color=Color.WHITE
+        livesPaint.textSize=width/20F
+        canvas?.drawText(joueur.lives.toString(),width/15F,height/20F,livesPaint)
     }
     private fun autoGen(){
         //Analyse la position en y du premier élément pour déterminer quand générer la suite
         if(time*Element.vitesseCam+2>=tailleJoueur*2){
+            if(random.nextFloat()>0.95){
+                lateinit var objTemp:Bonus
+                if(random.nextFloat()>0.2){
+                    objTemp=BonusVie(width*random.nextFloat()-tailleJoueur*2,height*random.nextFloat()-tailleJoueur*2,tailleJoueur*3,tailleJoueur*3,
+                    6*random.nextFloat(),6*random.nextFloat(),coeur)
+                }else{
+                    objTemp=BonusSaut(width*random.nextFloat()-tailleJoueur*2,height*random.nextFloat()-tailleJoueur*2,tailleJoueur*3,tailleJoueur*3,
+                        6*random.nextFloat(),6*random.nextFloat(),chaussures)
+                }
+                obstacles.add(objTemp)
+            }
             //On trouve la position de l'élement le plus haut sur l'écran pour positionner le suivant en fonction de cela
             var lowestEl = decor[0]
             for(el in decor){
@@ -238,8 +265,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                         image = busScolaire
                         }
                     }
-                    obstacleTemp = Vehicule(location*tailleJoueur*2,posLow-2*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
-                        width.toFloat(),image)
+                    obstacleTemp = Vehicule(location*tailleJoueur*2,posLow-2*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,image)
 
                     obstacles.add(obstacleTemp)
                     vehiList.remove(location)
@@ -267,7 +293,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     }
     private fun drawObstacles(){
         //Génération aléatoire d'obstacles
-        for (i in 0..(height/tailleJoueur).toInt() step 4){
+        for (i in 0..(height/tailleJoueur+3).toInt() step 4){
             var r = random.nextInt(3)
             lateinit var obstacleTemp :Vehicule
             var larg = 0F
@@ -315,7 +341,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                     }
                 }
                 obstacleTemp = Vehicule(location*tailleJoueur*2,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
-                    width.toFloat(),BitmapFactory.decodeResource(resources,path))
+                    BitmapFactory.decodeResource(resources,path))
                 obstacles.add(obstacleTemp)
             }
 
@@ -358,7 +384,6 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             }
         }
     }
-
     private fun drawPlayer(){
         val deadSound = Son(context,R.raw.mort)
         //alligne le joueur et les obstacles
@@ -366,35 +391,35 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         joueur = Joueur((posJoueur[0]-tailleJoueur),(posJoueur[1]+tailleJoueur),tailleJoueur*2,
             tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,deadSound,BitmapFactory.decodeResource(resources,R.drawable.bersini))
     }
-
     fun pause(){
         drawing = false
         thread.join()
     }
-
     fun resume(){
         drawing = true
         thread=Thread(this)
         thread.start()
     }
-
     fun getDimensions(deviceW:Int,deviceH:Int){
         deviceWidth=deviceW
         deviceHeight=deviceH
     }
-
+    fun revive(){
+        ready=true
+        deadScreen =true
+        sonMusique.start()
+        time=200
+        compteurMort=0
+        cancelUp=true
+        saut=tailleJoueur*2
+    }
     override fun onTouchEvent(e: MotionEvent): Boolean {
         //S'active quand l'écran est touché
         when(e.action){
             MotionEvent.ACTION_DOWN ->{
                 x1 = e.rawX; y1=e.rawY
                 if (compteurMort>2){
-                    ready=true
-                    deadScreen =true
-                    sonMusique.start()
-                    time=200
-                    compteurMort=0
-                    cancelUp=true
+                    revive()
                 }
             }
             MotionEvent.ACTION_UP -> {
@@ -432,7 +457,6 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         }
         return true
     }
-
     override fun run() {
         while(drawing){
             draw()
