@@ -77,7 +77,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         if(holder.surface.isValid){
             canvas =holder.lockCanvas()
             //Permet de ne pas acculumer les éléments dessinés
-            canvas?.drawRect(0F,0F,width.toFloat(),height.toFloat(),backgroundPaint)
+            canvas.drawRect(0F,0F,width.toFloat(),height.toFloat(),backgroundPaint)
             //Code pour dessiner ici
             if(!setup){
                 setupVariables()
@@ -111,8 +111,8 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         }
         textPaint.textSize = width/6F
         textPaint.textSize = width/15F
-        canvas?.drawText("TY E MOO' !",width/2F-width/5,height/2F-20,textPaint)
-        canvas?.drawText("Clique sur l'écran pour rejouer",width/15F,height/2F+height/10,textPaint)
+        canvas.drawText("TY E MOO' !",width/2F-width/5,height/2F-20,textPaint)
+        canvas.drawText("Clique sur l'écran pour rejouer",width/15F,height/2F+height/10,textPaint)
         compteurMort+=1
     }
     private fun setupVariables(){
@@ -153,7 +153,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private fun drawLives(){
         livesPaint.color=Color.WHITE
         livesPaint.textSize=width/20F
-        canvas?.drawText(joueur.lives.toString(),width/15F,height/20F,livesPaint)
+        canvas.drawText(joueur.lives.toString(),width/15F,height/20F,livesPaint)
     }
     private fun autoGen(){
         //Analyse la position en y du premier élément pour déterminer quand générer la suite
@@ -187,10 +187,10 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 val herbe = Element(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,herbeImage)
                 //Manipulation pour mettre la nouvelle herbe en première position
                 decor.add(herbe)
-                manager.addObs(herbe)
+                manager.addObs(0,herbe)
                 //Génération cailloux
                 val x = random.nextInt(maxCailloux)
-                var list = mutableListOf(0,1,2,3,4,5,6,7,8,9,10,11)
+                val list = mutableListOf(0,1,2,3,4,5,6,7,8,9,10,11)
                 for (j in 0..x) {
                     val index = random.nextInt(list.size)
                     val location = list[index]
@@ -223,17 +223,17 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             //On génère une ligne de route
             val route = Element(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,routeImage)
             decor.add(route)
-            manager.addObs(route)
+            manager.addObs(0,route)
             //Génération de véhicules
-            var r = random.nextInt(3)
+            val r = random.nextInt(3)
             lateinit var obstacleTemp :Vehicule
             var larg = 0F
             var speed = 0F
             var image = caillouArbre
             val z = random.nextInt(maxVoitures)
-            var vehiList = mutableListOf(1,4,7,10)
+            val vehiList = mutableListOf(1,4,7,10)
             //Meme direction pour tous les véhicules de la meme ligne
-            var dx = if(random.nextFloat()> 0.5) 1 else -1
+            val dx = if(random.nextFloat()> 0.5) 1 else -1
             for(j in 0..z) {
                 val index = random.nextInt(vehiList.size)
                 val location = vehiList[index]
@@ -291,7 +291,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 decor.remove(delItem)
                 manager.remove(delItem)
             }
-            var delItems=ArrayList<Element>()
+            val delItems=ArrayList<Element>()
             //Ensuite les véhicules
             for(el in obstacles) if(el.y1 > height+tailleJoueur*2) delItems.add(el)
             for(el in delItems) {
@@ -305,23 +305,23 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private fun drawObstacles(){
         //Génération aléatoire d'obstacles
         for (i in 0..(height/tailleJoueur+3).toInt() step 4){
-            var r = random.nextInt(3)
+            val r = random.nextInt(3)
             lateinit var obstacleTemp :Vehicule
             var larg = 0F
             var speed = 0F
             var path = 0
             val z = random.nextInt(maxVoitures)
-            var vehiList = mutableListOf(2,5,8,11)
+            val vehiList = mutableListOf(2,5,8,11)
             //Meme direction pour tous les véhicules de la meme ligne
-            var dx = if(random.nextFloat()> 0.5) 1 else -1
+            val dx = if(random.nextFloat()> 0.5) 1 else -1
 
             //Génération lignes de terrain
             val herbe = Element(0F,(i+2)*tailleJoueur,width.toFloat(),tailleJoueur*2 ,herbeImage)
             decor.add(herbe)
-            manager.addObs(herbe)
+            manager.addObs(0,herbe)
             val route = Element(0F,i*tailleJoueur,width.toFloat(),tailleJoueur*2,routeImage)
             decor.add(route)
-            manager.addObs(route)
+            manager.addObs(0,route)
             for(j in 0..z){
                 val index = random.nextInt(vehiList.size)
                 val location = vehiList[index]
@@ -367,7 +367,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
 
             //Génération cailloux
             val x = random.nextInt(maxCailloux)
-            var caiList = mutableListOf(0,1,2,3,4,5,6,7,8,9,10,11)
+            val caiList = mutableListOf(0,1,2,3,4,5,6,7,8,9,10,11)
             for (j in 0..x) {
                 val index = random.nextInt(caiList.size)
                 val location = caiList[index]
@@ -376,7 +376,6 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 var path = 0
 
                 //Rocher
-                val speed = 0F
                 val larg = 2F
 
                 //Détermination type

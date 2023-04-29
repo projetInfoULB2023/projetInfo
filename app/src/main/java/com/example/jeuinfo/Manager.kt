@@ -12,6 +12,9 @@ class Manager {
     fun updateObs(canvas: Canvas){
         observers.forEach{it.avance(canvas)}
     }
+    fun addObs(x:Int,observer: Observer){
+        observers.add(x,observer)
+    }
 
     fun clear(){
         observers.clear()

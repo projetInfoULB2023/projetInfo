@@ -24,7 +24,13 @@ class Vehicule(x1:Float,
         this.r.offset(vitesse,0F)
         this.x1 += vitesse
     }
-
+    fun setupImage(x:Float){
+        //flip l'image si l'obstacle recule (cohérence de la tete du camion)
+        if(x<0){
+            val matrix = Matrix().apply { postScale(-1f, 1f, image.width.toFloat() / 2f, image.height.toFloat() / 2f) }
+            this.image = Bitmap.createBitmap(this.image, 0, 0, image.width, image.height, matrix, true)
+        }
+    }
     override fun avance(canvas: Canvas) {
         //Mouvement horizontal en plus
         if(!imageSetup) {
@@ -34,7 +40,6 @@ class Vehicule(x1:Float,
         this.deplacement()
         super.avance(canvas)
     }
-
     override fun collision(joueur:Joueur,startingPos:Float) {
         joueur.r = RectF(joueur.x1+marge,joueur.y1+marge,joueur.x1+joueur.largeur-marge,joueur.y1+joueur.hauteur-marge)
         if(abs(this.y1-joueur.y1) < joueur.taillejoueur){
