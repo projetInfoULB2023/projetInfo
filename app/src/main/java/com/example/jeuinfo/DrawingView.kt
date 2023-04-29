@@ -30,7 +30,6 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private lateinit var joueur: Joueur
     private var reste = 0F
     private var score =0
-    private var actualScore=0
 
     private var routeImage = BitmapFactory.decodeResource(resources,R.drawable.route)
     private var herbeImage = BitmapFactory.decodeResource(resources,R.drawable.herbe)
@@ -68,6 +67,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private var livesPaint=Paint()
     companion object {
         var Cheight =0
+        var actualScore=0
         var Cwidth=0
         var saut = 0F
         var toBeRemoved = mutableListOf<Element>()
@@ -111,7 +111,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         textPaint.textSize = width/6F
         canvas.drawText(score.toString(),width/2F-width/18,height/2F-20,textPaint)
         textPaint.textSize = width/15F
-        canvas.drawText("Clique sur l'écran pour rejouer",width/15F,height/2F+height/10,textPaint)
+        canvas.drawText("Cliquer sur l'écran pour rejouer",width/15F,height/2F+height/10,textPaint)
         compteurMort+=1
     }
     private fun setupVariables(){
@@ -147,13 +147,14 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         toBeRemoved.clear()
         joueur.detectSortieEcran()
         joueur.avance(canvas)
+        if(actualScore>=score) score=actualScore
         drawText()
     }
     private fun drawText(){
         livesPaint.color=Color.WHITE
         livesPaint.textSize=width/20F
         canvas.drawText(joueur.lives.toString(),width/15F,height/20F,livesPaint)
-        canvas.drawText(score.toString(),width-width/15F,height/20F,livesPaint)
+        canvas.drawText(score.toString(),width-width/12F,height/20F,livesPaint)
     }
     private fun autoGen(){
         //Analyse la position en y du premier élément pour déterminer quand générer la suite
@@ -465,7 +466,6 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                             joueur.y1 -= saut
                             direction=0
                             actualScore+=1
-                            if(actualScore>=score) score=actualScore
                         }
                     }
                     for(obs in obstacles){
