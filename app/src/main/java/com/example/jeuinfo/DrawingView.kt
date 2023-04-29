@@ -29,6 +29,8 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private var decor = ArrayList<Element>()
     private lateinit var joueur: Joueur
     private var reste = 0F
+    private var score =0
+    private var actualScore=0
 
     private var routeImage = BitmapFactory.decodeResource(resources,R.drawable.route)
     private var herbeImage = BitmapFactory.decodeResource(resources,R.drawable.herbe)
@@ -107,8 +109,8 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             backgroundPaint.color = Color.GREEN
         }
         textPaint.textSize = width/6F
+        canvas.drawText(score.toString(),width/2F-width/20,height/2F-20,textPaint)
         textPaint.textSize = width/15F
-        canvas.drawText("TY E MOO' !",width/2F-width/5,height/2F-20,textPaint)
         canvas.drawText("Clique sur l'écran pour rejouer",width/15F,height/2F+height/10,textPaint)
         compteurMort+=1
     }
@@ -145,12 +147,13 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         toBeRemoved.clear()
         joueur.detectSortieEcran()
         joueur.avance(canvas)
-        drawLives()
+        drawText()
     }
-    private fun drawLives(){
+    private fun drawText(){
         livesPaint.color=Color.WHITE
         livesPaint.textSize=width/20F
         canvas.drawText(joueur.lives.toString(),width/15F,height/20F,livesPaint)
+        canvas.drawText(score.toString(),width-width/15F,height/20F,livesPaint)
     }
     private fun autoGen(){
         //Analyse la position en y du premier élément pour déterminer quand générer la suite
@@ -419,6 +422,8 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         ready=true
         deadScreen =true
         sonMusique.start()
+        actualScore=0
+        score=0
         time=200
         compteurMort=0
         cancelUp=true
@@ -454,10 +459,13 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                             //Bas
                             joueur.y1 += saut
                             direction=1
+                            actualScore-=1
                         }else {
                             //Haut
                             joueur.y1 -= saut
                             direction=0
+                            actualScore+=1
+                            if(actualScore>=score) score=actualScore
                         }
                     }
                     for(obs in obstacles){
