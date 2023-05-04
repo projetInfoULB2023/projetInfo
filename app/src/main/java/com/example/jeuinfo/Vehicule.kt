@@ -31,14 +31,14 @@ class Vehicule(x1:Float,
             this.image = Bitmap.createBitmap(this.image, 0, 0, image.width, image.height, matrix, true)
         }
     }
-    override fun avance(canvas: Canvas) {
+    override fun update(canvas: Canvas) {
         //Mouvement horizontal en plus
         if(!imageSetup) {
             setupImage(vitesse)
             imageSetup=true
         }
         this.deplacement()
-        super.avance(canvas)
+        super.update(canvas)
     }
     override fun collision(joueur:Joueur,startingPos:Float) {
         joueur.r = RectF(joueur.x1+marge,joueur.y1+marge,joueur.x1+joueur.largeur-marge,joueur.y1+joueur.hauteur-marge)

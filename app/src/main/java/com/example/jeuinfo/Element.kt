@@ -15,7 +15,7 @@ open class Element(var x1:Float, var y1:Float, var largeur:Float,var hauteur:Flo
         this.r = RectF(x1+marge,y1+marge,x1+largeur-marge,y1+hauteur-marge)
         canvas?.drawBitmap(image,null , Rect(x1.toInt(),y1.toInt(),(x1+largeur).toInt(),(y1+hauteur).toInt()),paint)
     }
-    override fun avance(canvas:Canvas){
+    override fun update(canvas:Canvas){
         this.r.offset(0F, dy*vitesseCam)
         y1+=vitesseCam
         draw(canvas)

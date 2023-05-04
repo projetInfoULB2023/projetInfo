@@ -4,18 +4,16 @@ import android.graphics.Canvas
 
 class Manager {
     private val observers = mutableListOf<Observer>()
-
     fun addObs(observer:Observer){
         observers.add(observer)
     }
 
     fun updateObs(canvas: Canvas){
-        observers.forEach{it.avance(canvas)}
+        observers.forEach{it.update(canvas)}
     }
     fun addObs(x:Int,observer: Observer){
         observers.add(x,observer)
     }
-
     fun clear(){
         observers.clear()
     }
