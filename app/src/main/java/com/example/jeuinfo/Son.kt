@@ -17,7 +17,6 @@ class Son(private val context: Context,private val path:Int) {
 
     }
     fun stop(){
-        mediaPlayer?.stop()
+        mediaPlayer.stop()
     }
-
 }
