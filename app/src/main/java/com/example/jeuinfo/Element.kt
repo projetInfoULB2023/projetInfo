@@ -6,7 +6,7 @@ import android.graphics.*
 open class Element(var x1:Float, var y1:Float, var largeur:Float,var hauteur:Float,var image:Bitmap) : Observer{
     private val paint = Paint()
     companion object {
-        var vitesseCam = 4F
+        var vitesseCam = 0F
     }
     var r = RectF(x1,x1+largeur,y1,y1 + hauteur)
     private var dy= 1
