@@ -16,8 +16,14 @@ class Cailloux(x1:Float,
             if(this.r.intersect(joueur.r)){
                 //0, haut. 1, bas. 2, gauche.3, droite
                 when(direction){
-                    0 -> joueur.y1 += saut
-                    1 -> joueur.y1 -= saut
+                    0 -> {
+                        joueur.y1 += saut
+                        DrawingView.actualScore-=1
+                    }
+                    1 -> {
+                        joueur.y1 -= saut
+                        DrawingView.actualScore-=1
+                    }
                     2 -> joueur.x1 += saut
                     3 -> joueur.x1 -= saut
                 }

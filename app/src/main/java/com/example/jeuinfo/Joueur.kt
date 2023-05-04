@@ -40,6 +40,7 @@ class Joueur(x1:Float,y1:Float,largeur:Float,hauteur:Float,private val width:Flo
             try {
                 bonuses.remove(delItem)
                 this.y1+=hauteur
+                DrawingView.actualScore-=1
             }catch(e:UninitializedPropertyAccessException){
                 this.alive = false
             }

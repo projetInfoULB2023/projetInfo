@@ -28,8 +28,8 @@ open class Bonus(x1:Float,
         this.x1+=dx*vitesseX
         this.y1+=dy*vitesseY
     }
-    override fun avance(canvas: Canvas){
+    override fun update(canvas: Canvas){
         this.deplacement()
-        super.avance(canvas)
+        super.update(canvas)
     }
 }
