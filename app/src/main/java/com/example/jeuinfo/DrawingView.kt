@@ -304,40 +304,44 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
 
     // fonction de génération automatique du terrain
     private fun autoGen(){
-        //Analyse la position en y du premier élément pour déterminer quand générer la suite
+        //détermine la nécessité de charger de nouveau terrain en fonction du temps écoulé
         if(time*Element.vitesseCam+2>=tailleJoueur*2){
+            //génération des bonus
             if(random.nextFloat()>0.95){
                 lateinit var objTemp:Bonus
-                if(random.nextFloat()>0.2){
+                if(random.nextFloat()>0.2) {
                     objTemp=BonusVie(width*random.nextFloat()-tailleJoueur*2,height*random.nextFloat()-tailleJoueur*2,tailleJoueur*3,tailleJoueur*3,
                     6*random.nextFloat(),6*random.nextFloat(),coeur)
-                }else{
+                } else {
                     objTemp=BonusSaut(width*random.nextFloat()-tailleJoueur*2,height*random.nextFloat()-tailleJoueur*2,tailleJoueur*3,tailleJoueur*3,
                         6*random.nextFloat(),6*random.nextFloat(),chaussures)
                 }
                 obstacles.add(objTemp)
                 manager.addObs(objTemp)
             }
-            //On trouve la position de l'élement le plus haut sur l'écran pour positionner le suivant en fonction de cela
+
+            //détermination de la position de l'élément le plus haut sur l'écran pour positionner le suivant en fonction
             var lowestEl = decor[0]
             for(el in decor){
                 for(i in 0..decor.size){
                     if(el.y1<lowestEl.y1){
-                        lowestEl=el
+                        lowestEl = el
                     }
                 }
             }
             val posLow = lowestEl.y1
-            time=0
-            //On génère une nouvelle ligne
+            time = 0
+
+            //génération d'une nouvelle ligne (avec autant de chance que ce soit une route ou une pelouse)
             if(random.nextFloat()>0.5){
                drawHerbe(posLow)
             }else{
                 drawRoute(posLow)
             }
-            //Supprime les éléments qui ont quitté le jeu
+
+            //suppression des éléments qui ont quitté l'écran
             lateinit var delItem : Element
-            //D'abord les éléments du décor
+            //suppression du décor
             var removable = false
             for(el in decor){
                 if (el.y1 > height+tailleJoueur*2){
@@ -350,7 +354,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 manager.remove(delItem)
             }
             val delItems=ArrayList<Element>()
-            //Ensuite les véhicules
+            //suppression des véhicules
             for(el in obstacles) if(el.y1 > height+tailleJoueur*2) delItems.add(el)
             for(el in delItems) {
                 obstacles.remove(el)
@@ -358,13 +362,16 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             }
 
         }
-        time+=1
+        time += 1
     }
-    private fun drawObstacles(){
-        //Génération aléatoire d'obstacles
-        for (i in 0..(height/tailleJoueur+3).toInt() step 4){
 
-            //Génération lignes de terrain
+
+
+    // fonction de dessin des obstacles initiaux
+    private fun drawObstacles(){
+        //génération aléatoire d'obstacles
+        for (i in 0..(height/tailleJoueur+3).toInt() step 4){
+            //génération des lignes de terrain
             val herbe = Element(0F,(i+2)*tailleJoueur,width.toFloat(),tailleJoueur*2 ,herbeImage)
             decor.add(herbe)
             manager.addObs(0,herbe)
@@ -375,6 +382,10 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             genCailloux(i)
         }
     }
+
+
+
+    // fonction de dessin des routes initiales
     private fun drawTerrain(i:Int){
         val z = random.nextInt(maxVoitures)
         val r = random.nextInt(3)
@@ -382,20 +393,23 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         var larg = 0F
         var speed = 0F
         var path = 0
-
         val vehiList = mutableListOf(2,5,8,11)
+
         //Meme direction pour tous les véhicules de la meme ligne
-        val dx = if(random.nextFloat()> 0.5) 1 else -1
+        val dx = if(random.nextFloat()> 0.5) 1 else -1 //détermination de la direction des véhicules de la ligne
+
+        //création des véhicules de la ligne
         for(j in 0..z){
             val index = random.nextInt(vehiList.size)
             val location = vehiList[index]
             vehiList.remove(location)
             when(r){
+                //le véhicule est une voiture
                 0 -> {
-                    //voiture
                     speed = 7F
                     larg = 2F
-                    //Détermination couleur
+
+                    //détermination de la couleur de la voiture
                     val y = random.nextInt(5)
                     when(y){
                         0->path=R.drawable.voiture_bleu
@@ -405,22 +419,24 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                         4->path=R.drawable.voiture_rouge
                     }
                 }
+
+                //le véhicule est un camion
                 1 -> {
-                    //camion
                     speed = 5F
-                    larg=4F
-                    //Reste à déterminer la couleur
+                    larg = 4F
+                    //détermination de la couleur du camion
                     val y = random.nextInt(2)
                     when(y){
                         0->path=R.drawable.camion_bleu
                         1->path=R.drawable.camion_rouge
                     }
                 }
+
+                //le véhicule est un bus scolaire
                 2 -> {
-                    //bus scolaire, rien d'autre à déterminer
                     speed = 4F
-                    larg=5F
-                    path=R.drawable.bus_scolaire
+                    larg = 5F
+                    path = R.drawable.bus_scolaire
                 }
             }
             obstacleTemp = Vehicule(location*tailleJoueur*2,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
@@ -429,8 +445,11 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             manager.addObs(obstacleTemp)
         }
     }
+
+
+
+    // fonction de génération des cailloux initiaux
     private fun genCailloux(i:Int){
-        //Génération cailloux
         val x = random.nextInt(maxCailloux)
         val caiList = mutableListOf(0,1,2,3,4,5,6,7,8,9,10,11)
         for (j in 0..x) {
@@ -439,11 +458,9 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             caiList.remove(location)
             lateinit var obstacleTemp: Cailloux
             var path = 0
+            val larg = 2F //largeur des rochers
 
-            //Rocher
-            val larg = 2F
-
-            //Détermination type
+            //détermination du type de rocher
             val y = random.nextInt(4)
             when (y) {
                 0 -> path = R.drawable.caillou_arbre
@@ -451,6 +468,8 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 2 -> path = R.drawable.caillou_fougere
                 3 -> path = R.drawable.caillou_palmier
             }
+
+            //création du rocher
             obstacleTemp = Cailloux(
                 (location * tailleJoueur*2),
                 (i+2) * tailleJoueur,
@@ -462,99 +481,141 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             manager.addObs(obstacleTemp)
         }
     }
+
+
+
+    // fonction de dessin du joueur
     private fun drawPlayer(){
         val deadSound = Son(context,R.raw.mort)
-        //alligne le joueur et les obstacles
+
+        //alignement du joueur et des obstacles
         posJoueur= arrayOf(width/12*7F-tailleJoueur,startingPos)
         joueur = Joueur((posJoueur[0]-tailleJoueur),(posJoueur[1]+tailleJoueur),tailleJoueur*2,
             tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,deadSound,BitmapFactory.decodeResource(resources,R.drawable.bersini))
     }
+
+
+
+    // fonction exécutée pour mettre le jeu en pause
     fun pause(){
         drawing = false
         thread.join()
     }
+
+
+
+    // fonction exécutée pour remettre le jeu en route
     fun resume(){
         drawing = true
         thread=Thread(this)
         thread.start()
     }
-    fun getDimensions(deviceW:Int,deviceH:Int){
-        deviceWidth=deviceW
-        deviceHeight=deviceH
-    }
-    fun revive(){
-        ready=true
-        deadScreen =true
-        actualScore=0
-        score=0
-        time=200
-        compteurMort=0
-        cancelUp=true
-        saut=tailleJoueur*2
-    }
-    override fun onTouchEvent(e: MotionEvent): Boolean {
-        //S'active quand l'écran est touché
-        when(e.action){
-            MotionEvent.ACTION_DOWN -> {
-                x1 = e.rawX; y1=e.rawY
 
+
+
+    // fonction de setup des dimensions de l'écran
+    fun getDimensions(deviceW:Int,deviceH:Int){
+        deviceWidth = deviceW
+        deviceHeight = deviceH
+    }
+
+
+
+    // fonction de remise en route du jeu après une mort
+    fun revive(){
+        ready = true
+        deadScreen = true
+        actualScore = 0
+        score = 0
+        time = 200
+        compteurMort = 0
+        cancelUp = true
+        saut = tailleJoueur*2
+    }
+
+
+
+    // fonction exécutée lors des événements de toucher
+    override fun onTouchEvent(e: MotionEvent): Boolean {
+        when(e.action){
+            //l'écran est touché
+            MotionEvent.ACTION_DOWN -> {
+                x1 = e.rawX; y1 = e.rawY //obtention des coordonnées du toucher
                 if (compteurMort>2){
                     revive()
                 }
             }
+
+            //l'écran est relâché
             MotionEvent.ACTION_UP -> {
-                if(!cancelUp){
-                    x2=e.rawX;y2=e.rawY
-                    //Direction de swipe
-                    if(abs(x2-x1)<5 && abs(y2-y1)<5){
-                        //On considère un simple click donc un mouvement vers le haut
+                if(!cancelUp) {
+                    x2 = e.rawX; y2 = e.rawY //obtention des coordonnées du relâchement
+
+                    //détermination de la direction du glissement
+                    if(abs(x2-x1)<5 && abs(y2-y1)<5) {
+                        //mouvement insuffisant, simple click considéré, donc un mouvement vers le haut
                         joueur.y1 -= saut
-                        direction=0
+                        direction = 0
                         actualScore+=(saut/tailleJoueur/2).toInt()
-                    } else if(abs(x2-x1) > abs(y2-y1)){
-                        //Mouvement horizontal, reste à déterminer gauche ou droite
+                    } else if(abs(x2-x1) > abs(y2-y1)) {
+                        //mouvement horizontal, détermination de la direction horizontale
                         if(x2-x1 > 0){
-                            //Droite
+                            //vers la droite
                             joueur.x1 += saut
-                            direction=3
-                        }else{
-                            //Gauche
+                            direction = 3
+                        } else {
+                            //vers la gauche
                             joueur.x1 -= saut
-                            direction=2
+                            direction = 2
                         }
-                    }else{
-                        //Mouvement vertical, reste à déterminer haut ou bas
-                        if(y2-y1 > 0){
-                            //Bas
+                    } else {
+                        //mouvement vertical, détermination de la direction verticale
+                        if(y2-y1 > 0) {
+                            //vers le bas
                             joueur.y1 += saut
-                            direction=1
-                            actualScore-=1
-                        }else {
-                            //Haut
+                            direction = 1
+                            actualScore -= 1
+                        } else {
+                            //vers le haut
                             joueur.y1 -= saut
-                            direction=0
-                            actualScore+=1
+                            direction = 0
+                            actualScore += 1
                         }
                     }
+
+                    //détermination des collisions
                     for(obs in obstacles){
                         if(obs is CollisionSimple) obs.collision(joueur,direction,saut)
                     }
-                }else cancelUp=false
+                } else cancelUp = false
             }
         }
         return true
     }
+
+
+
+    // fonctionnement continu
     override fun run() {
         while(drawing){
             draw()
         }
     }
+
+
+
     override fun surfaceCreated(p0: SurfaceHolder) {
         TODO("Not yet implemented")
     }
+
+
+
     override fun surfaceChanged(p0: SurfaceHolder, p1: Int, p2: Int, p3: Int) {
         TODO("Not yet implemented")
     }
+
+
+
     override fun surfaceDestroyed(p0: SurfaceHolder) {
         TODO("Not yet implemented")
     }
