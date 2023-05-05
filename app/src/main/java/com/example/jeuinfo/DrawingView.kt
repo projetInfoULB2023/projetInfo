@@ -310,15 +310,6 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private fun drawObstacles(){
         //Génération aléatoire d'obstacles
         for (i in 0..(height/tailleJoueur+3).toInt() step 4){
-            val r = random.nextInt(3)
-            lateinit var obstacleTemp :Vehicule
-            var larg = 0F
-            var speed = 0F
-            var path = 0
-            val z = random.nextInt(maxVoitures)
-            val vehiList = mutableListOf(2,5,8,11)
-            //Meme direction pour tous les véhicules de la meme ligne
-            val dx = if(random.nextFloat()> 0.5) 1 else -1
 
             //Génération lignes de terrain
             val herbe = Element(0F,(i+2)*tailleJoueur,width.toFloat(),tailleJoueur*2 ,herbeImage)
@@ -327,49 +318,62 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             val route = Element(0F,i*tailleJoueur,width.toFloat(),tailleJoueur*2,routeImage)
             decor.add(route)
             manager.addObs(0,route)
-            for(j in 0..z){
-                val index = random.nextInt(vehiList.size)
-                val location = vehiList[index]
-                vehiList.remove(location)
-                when(r){
-                    0 -> {
-                        //voiture
-                        speed = 7F
-                        larg = 2F
-                        //Détermination couleur
-                        val y = random.nextInt(5)
-                        when(y){
-                            0->path=R.drawable.voiture_bleu
-                            1->path=R.drawable.voiture_grise
-                            2->path=R.drawable.voiture_jaune
-                            3->path=R.drawable.voiture_orange
-                            4->path=R.drawable.voiture_rouge
-                        }
-                    }
-                    1 -> {
-                        //camion
-                        speed = 5F
-                        larg=4F
-                        //Reste à déterminer la couleur
-                        val y = random.nextInt(2)
-                        when(y){
-                            0->path=R.drawable.camion_bleu
-                            1->path=R.drawable.camion_rouge
-                        }
-                    }
-                    2 -> {
-                        //bus scolaire, rien d'autre à déterminer
-                        speed = 4F
-                        larg=5F
-                        path=R.drawable.bus_scolaire
+            drawTerrain(i)
+            genCailloux(i)
+        }
+    }
+    private fun drawTerrain(i:Int){
+        val z = random.nextInt(maxVoitures)
+        val r = random.nextInt(3)
+        lateinit var obstacleTemp :Vehicule
+        var larg = 0F
+        var speed = 0F
+        var path = 0
+
+        val vehiList = mutableListOf(2,5,8,11)
+        //Meme direction pour tous les véhicules de la meme ligne
+        val dx = if(random.nextFloat()> 0.5) 1 else -1
+        for(j in 0..z){
+            val index = random.nextInt(vehiList.size)
+            val location = vehiList[index]
+            vehiList.remove(location)
+            when(r){
+                0 -> {
+                    //voiture
+                    speed = 7F
+                    larg = 2F
+                    //Détermination couleur
+                    val y = random.nextInt(5)
+                    when(y){
+                        0->path=R.drawable.voiture_bleu
+                        1->path=R.drawable.voiture_grise
+                        2->path=R.drawable.voiture_jaune
+                        3->path=R.drawable.voiture_orange
+                        4->path=R.drawable.voiture_rouge
                     }
                 }
-                obstacleTemp = Vehicule(location*tailleJoueur*2,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
-                    BitmapFactory.decodeResource(resources,path))
-                obstacles.add(obstacleTemp)
-                manager.addObs(obstacleTemp)
+                1 -> {
+                    //camion
+                    speed = 5F
+                    larg=4F
+                    //Reste à déterminer la couleur
+                    val y = random.nextInt(2)
+                    when(y){
+                        0->path=R.drawable.camion_bleu
+                        1->path=R.drawable.camion_rouge
+                    }
+                }
+                2 -> {
+                    //bus scolaire, rien d'autre à déterminer
+                    speed = 4F
+                    larg=5F
+                    path=R.drawable.bus_scolaire
+                }
             }
-            genCailloux(i)
+            obstacleTemp = Vehicule(location*tailleJoueur*2,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
+                BitmapFactory.decodeResource(resources,path))
+            obstacles.add(obstacleTemp)
+            manager.addObs(obstacleTemp)
         }
     }
     private fun genCailloux(i:Int){

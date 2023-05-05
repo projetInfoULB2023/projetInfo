@@ -7,7 +7,6 @@ class Manager {
     fun addObs(observer:Observer){
         observers.add(observer)
     }
-
     fun updateObs(canvas: Canvas){
         observers.forEach{it.update(canvas)}
     }
