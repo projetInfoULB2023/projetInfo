@@ -1,9 +1,14 @@
 package com.example.jeuinfo
 
+
+// importations
 import android.graphics.Bitmap
 import android.graphics.RectF
 import kotlin.math.abs
 
+
+
+// classe héritante de la classe Bonus et implémentant l'interface CollisionDisparition
 class BonusVie(x1:Float, y1:Float, largeur:Float, hauteur:Float, vitesseX:Float, vitesseY:Float, image: Bitmap) : Bonus(x1, y1, largeur, hauteur, vitesseX, vitesseY, image), CollisionDisparition {
 
     //réécriture de la fonction collision() pour le cas d'une collision avec un bonus de vie
