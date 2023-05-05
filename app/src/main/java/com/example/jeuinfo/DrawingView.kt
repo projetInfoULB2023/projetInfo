@@ -595,7 +595,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
 
 
 
-    // fonctionnement continu
+    // fonctionnement continu cyclique de l'application
     override fun run() {
         while(drawing){
             draw()
