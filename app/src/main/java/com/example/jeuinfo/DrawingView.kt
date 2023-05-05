@@ -1,5 +1,7 @@
 package com.example.jeuinfo
 
+
+//importations
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
@@ -10,31 +12,41 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.abs
 
+
+
+// classe codant le visuel de l'application
 class DrawingView @JvmOverloads constructor (private var context: Context, attributes: AttributeSet? = null, defStyleAttr: Int = 0): SurfaceView(context, attributes,defStyleAttr),
     SurfaceHolder.Callback,Runnable {
-    private var deviceHeight = 0
-    private var deviceWidth = 0
-    private val backgroundPaint = Paint()
+    // VALEURS DE CLASSE
+    private val backgroundPaint = Paint() //couleur de fond
+    private var textPaint = Paint() //couleur des textes
+    private var livesPaint = Paint()
     private val random = Random()
-    private val maxVoitures = 3
-    private val maxCailloux = 3
+    private val maxVoitures = 3 //nombre maximal d'obstacles mouvants par route
+    private val maxCailloux = 3 //nombre maximal d'obstacles inanimés par pelouse
+
+    // VARIABLES DE CLASSE
+    private var deviceHeight = 0 //hauteur de l'appareil executant (en pixels)
+    private var deviceWidth = 0 //largeur de l'appareil executant (en pixels)
     private var drawing = true
+    private var deadScreen = true
+    private var ready = true
+    private var tailleJoueur = 0F //taille de l'icône joueur
+    private var manager = Manager()
+    private var setup = false
+    private var decor = ArrayList<Element>() //obtention du décor depuis la classe Element
+    private var obstacles = mutableListOf<Element>() //obtention des obstacles depuis la classe Element
+    private var reste = 0F
+    private var startingPos = 0F //position initiale du joueur
+    private var time = 0
+    private var cancelUp = false
     lateinit var canvas:Canvas
     lateinit var thread:Thread
-    private var direction = 0
-    private var tailleJoueur = 0F
-    private var manager = Manager()
-    private lateinit var posJoueur:Array<Float>
-    private var setup = false
-    private var decor = ArrayList<Element>()
     private lateinit var joueur: Joueur
-    private var reste = 0F
-    private var score =0
 
+    // IMAGES ET SONS DE L'APPLICATION
     private var routeImage = BitmapFactory.decodeResource(resources,R.drawable.route)
     private var herbeImage = BitmapFactory.decodeResource(resources,R.drawable.herbe)
-
-    private var options = BitmapFactory.Options()
     private var caillouArbre = BitmapFactory.decodeResource(resources,R.drawable.caillou_arbre)
     private var caillouBuisson = BitmapFactory.decodeResource(resources,R.drawable.caillou_buisson)
     private var caillouFougere = BitmapFactory.decodeResource(resources,R.drawable.caillou_fougere)
@@ -44,27 +56,24 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private var voitureJaune = BitmapFactory.decodeResource(resources,R.drawable.voiture_jaune)
     private var voitureOrange = BitmapFactory.decodeResource(resources,R.drawable.voiture_orange)
     private var voitureRouge = BitmapFactory.decodeResource(resources,R.drawable.voiture_rouge)
-    private var busScolaire=BitmapFactory.decodeResource(resources,R.drawable.bus_scolaire,options)
+    private var options = BitmapFactory.Options()
+    private var busScolaire = BitmapFactory.decodeResource(resources,R.drawable.bus_scolaire, options)
     private var camionBleu = BitmapFactory.decodeResource(resources,R.drawable.camion_bleu)
     private var camionRouge = BitmapFactory.decodeResource(resources,R.drawable.camion_rouge)
-    private var coeur=BitmapFactory.decodeResource(resources,R.drawable.coeur)
-    private var chaussures=BitmapFactory.decodeResource(resources,R.drawable.chaussures)
-    private var startingPos =0F
-    private var time =0
-    private var cancelUp=false
-
-    //Entrée touche
-    var x1=0F
-    var x2=0F
-    var y1=0F
-    var y2=0F
-    private var textPaint = Paint()
-    private var compteurMort = 0
-    private var deadScreen=true
+    private var coeur = BitmapFactory.decodeResource(resources,R.drawable.coeur)
+    private var chaussures = BitmapFactory.decodeResource(resources,R.drawable.chaussures)
     private var sonMusique = Son(context,R.raw.musiquefond)
-    private var ready=true
-    private var obstacles = mutableListOf<Element>()
-    private var livesPaint=Paint()
+
+    // VARIABLES D'ETAT (liées à l'évolution de la partie)
+    private var score = 0 //setup du score joueur
+    private var compteurMort = 0
+    private lateinit var posJoueur:Array<Float> //position du joueur
+    var x1 = 0F //abscisse du premier contact du doigt
+    var x2 = 0F //abscisse du dernier contact du doigt
+    var y1 = 0F //ordonnée du premier contact du doigt
+    var y2 = 0F //ordonnée du dernier contact du doigt
+    private var direction = 0 //direction de mouvement du doigt
+
     companion object {
         var Cheight =0
         var actualScore=0
@@ -72,36 +81,44 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         var saut = 0F
         var toBeRemoved = mutableListOf<Element>()
     }
+
+
+
+    // fonction de dessin de l'application
     private fun draw(){
         if(holder.surface.isValid){
-            canvas =holder.lockCanvas()
-            //Permet de ne pas acculumer les éléments dessinés
-            canvas.drawRect(0F,0F,width.toFloat(),height.toFloat(),backgroundPaint)
-            //Code pour dessiner ici
+            canvas = holder.lockCanvas()
+            canvas.drawRect(0F,0F,width.toFloat(),height.toFloat(),backgroundPaint) //réinitialise l'affichage
+            //dessin de la première image (avec setup des variables nécessaires)
             if(!setup){
-                setupVariables()
-                drawObstacles()
-                drawPlayer()
+                setupVariables() //mise à jour des variables d'état
+                drawObstacles() //appel de la fonction de dessin des obstacles
+                drawPlayer() //appel de la fonction de dessin du joueur
                 setup = true
             }
-            if(joueur.alive && ready) tickGame()
-            else mort()
-            //Fin code pour dessiner
+            if(joueur.alive && ready) tickGame() //continuer la partie si le joueur n'est pas mort
+            else mort() //arrêt de la partie sinon
+
             holder.unlockCanvasAndPost(canvas)
             }
     }
-    private fun mort(){
-        //On reinitialise la partie
-        if (deadScreen){
-            joueur.deadSound.start()
-            obstacles.clear()
-            decor.clear()
+
+
+
+    // fonction exécutée en cas de mort du joueur
+    private fun mort() {
+        //réinitialisation de la partie
+        if (deadScreen) {
+            joueur.deadSound.start() //production du son de mort
+            obstacles.clear() //suppression des obstacles mémorisés
+            decor.clear() //suppression du décor mémorisé
             manager.clear()
-            deadScreen=false
-            backgroundPaint.color=Color.RED
-            textPaint.color=Color.BLACK
-            ready=false
+            deadScreen = false
+            backgroundPaint.color = Color.RED
+            textPaint.color = Color.BLACK
+            ready = false
         }
+
         if(compteurMort==2) {
             drawObstacles()
             drawPlayer()
@@ -111,74 +128,100 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         canvas.drawText(score.toString(),width/2F-width/18,height/2F-20,textPaint)
         textPaint.textSize = width/15F
         canvas.drawText("Cliquer sur l'écran pour rejouer",width/15F,height/2F+height/10,textPaint)
-        compteurMort+=1
+        compteurMort += 1
     }
+
+
+
+    // fonction de setup des variables d'état
     private fun setupVariables(){
-        Cheight=height
-        Cwidth=width
+        //variables d'état
+        Cheight = height
+        Cwidth = width
         sonMusique.start()
         time = 200
-        compteurMort=0
-        tailleJoueur=width/24F
+        compteurMort = 0
+        tailleJoueur = width/24F
         saut = tailleJoueur*2F
-        reste=tailleJoueur*36%tailleJoueur
+        reste = tailleJoueur*36%tailleJoueur
         startingPos = tailleJoueur*17
-        //decor
+
+        //décor
         routeImage=Bitmap.createScaledBitmap(routeImage,width,tailleJoueur.toInt()*2,true)
         herbeImage=Bitmap.createScaledBitmap(herbeImage,width,tailleJoueur.toInt()*2,true)
     }
-    private fun tickGame(){
+
+
+
+    // fonction de mise à jour de l'affichage
+    private fun tickGame() {
         autoGen()
+        //déplacement des obstacles (verticalement selon l'avancement de l'écran et horizontalement selon leur type et leur vitesse
         manager.updateObs(canvas)
-        //for(obs in decor) obs.avance(canvas)
         for(obs in obstacles) {
-          //  obs.avance(canvas)
             if(obs is Deplacable){
                 obs.deplacement()
+                //détection des collisions
                 if(obs is CollisionMortelle) obs.collision(joueur,startingPos)
                 if(obs is CollisionDisparition) obs.collision(joueur)
             }
         }
+
+        //suppression des obstacles passés
         for(obs in toBeRemoved){
             obstacles.remove(obs)
             manager.remove(obs)
         }
         toBeRemoved.clear()
-        joueur.detectSortieEcran()
-        joueur.update(canvas)
-        if(actualScore>=score) score=actualScore
+
+        joueur.detectSortieEcran() //détection de la sortie d'écran du joueur
+        joueur.update(canvas) //mise à jour de la position du joueur
+
+        //mise à jour du score
+        if(actualScore>=score) score = actualScore
         drawText()
     }
+
+
+
+    // fonction de mise à jour des textes (bonus et score)
     private fun drawText(){
         livesPaint.color=Color.WHITE
         livesPaint.textSize=width/20F
         canvas.drawText(joueur.lives.toString(),width/15F,height/20F,livesPaint)
         canvas.drawText(score.toString(),width-width/12F,height/20F,livesPaint)
     }
+
+
+
+    // fonction de dessin des routes
     private fun drawRoute(posLow:Float){
-        //On génère une ligne de route
-        val route = Element(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,routeImage)
-        decor.add(route)
-        manager.addObs(0,route)
-        //Génération de véhicules
-        val r = random.nextInt(3)
-        lateinit var obstacleTemp :Vehicule
         var larg = 0F
         var speed = 0F
         var image = caillouArbre
         val z = random.nextInt(maxVoitures)
         val vehiList = mutableListOf(1,4,7,10)
-        //Meme direction pour tous les véhicules de la meme ligne
-        val dx = if(random.nextFloat()> 0.5) 1 else -1
+
+        //génération d'une ligne de route
+        val route = Element(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,routeImage)
+        decor.add(route)
+        manager.addObs(0,route)
+
+        //Génération des véhicules
+        val r = random.nextInt(3) //type du véhicule
+        lateinit var obstacleTemp :Vehicule
+        val dx = if(random.nextFloat()> 0.5) 1 else -1 //détermination d'une direction des véhicules pour la ligne
+
+        //mise en place des véhicules
         for(j in 0..z) {
             val index = random.nextInt(vehiList.size)
             val location = vehiList[index]
             when (r) {
+                //véhicule est une voiture
                 0 -> {
-                    //voiture
                     speed = 7F
                     larg = 2F
-                    //Détermination couleur
+                    //détermination couleur
                     when (random.nextInt(5)) {
                         0 -> image = voitureBleu
                         1 -> image = voitureGrise
@@ -187,24 +230,25 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                         4 -> image = voitureRouge
                     }
                 }
+                //véhicule est un camion
                 1 -> {
-                    //camion
                     speed = 5F
                     larg = 4F
-                    //Reste à déterminer la couleur
+                    //détermination de la couleur
                     val y = random.nextInt(2)
                     when (y) {
                         0 -> image = camionBleu
                         1 -> image = camionRouge
                     }
                 }
+                //véhicule est un bus scolaire
                 2 -> {
-                    //bus scolaire, rien d'autre à déterminer
                     speed = 4F
                     larg = 5F
                     image = busScolaire
                 }
             }
+
             obstacleTemp = Vehicule(location*tailleJoueur*2,posLow-2*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,image)
 
             obstacles.add(obstacleTemp)
@@ -213,13 +257,18 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
 
         }
     }
+
+
+
+    // fonction de dessin des pelouses
     private fun drawHerbe(posLow:Float){
-        //On génère une ligne d'herbe
-        val herbe = Element(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,herbeImage)
+        val herbe = Element(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,herbeImage) //génération d'une ligne d'herbe
+
         //Manipulation pour mettre la nouvelle herbe en première position
         decor.add(herbe)
         manager.addObs(0,herbe)
-        //Génération cailloux
+
+        //Génération des rochers
         val x = random.nextInt(maxCailloux)
         val list = mutableListOf(0,1,2,3,4,5,6,7,8,9,10,11)
         for (j in 0..x) {
@@ -228,10 +277,9 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             list.remove(location)
             lateinit var obstacleTemp: Cailloux
             var image = caillouArbre
-
-            //Rocher
             val larg = 2F
-            //Détermination type
+
+            //Détermination du type de rocher
             val y = random.nextInt(4)
             when (y) {
                 0 -> image = caillouArbre
@@ -239,6 +287,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 2 -> image = caillouFougere
                 3 -> image = caillouPalmier
             }
+
             obstacleTemp = Cailloux(
                 (location * tailleJoueur*2),
                 posLow-2 * tailleJoueur,
@@ -250,6 +299,10 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             manager.addObs(obstacleTemp)
         }
     }
+
+
+
+    // fonction de génération automatique du terrain
     private fun autoGen(){
         //Analyse la position en y du premier élément pour déterminer quand générer la suite
         if(time*Element.vitesseCam+2>=tailleJoueur*2){
