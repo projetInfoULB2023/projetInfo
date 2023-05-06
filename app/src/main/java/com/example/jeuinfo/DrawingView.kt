@@ -2,6 +2,7 @@ package com.example.jeuinfo
 
 
 //importations
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
@@ -533,6 +534,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
 
 
     // fonction exécutée lors des événements de toucher
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(e: MotionEvent): Boolean {
         when(e.action){
             //l'écran est touché
