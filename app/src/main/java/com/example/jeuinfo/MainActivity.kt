@@ -35,13 +35,8 @@ class MainActivity : AppCompatActivity() {
         //obtention des dimensions de l'appareil exécutant le code
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
-        //setup des mesures étalons de l'affichage de l'application
-        val height = displayMetrics.heightPixels
-        val width = displayMetrics.widthPixels
-
         //setup du layout de l'application
         drawingView = binding.vMain
-        drawingView.getDimensions(width,height)
         drawingView.setWillNotDraw(false)
         drawingView.invalidate()
     }

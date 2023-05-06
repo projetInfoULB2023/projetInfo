@@ -24,8 +24,6 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private val maxCailloux = 3 //nombre maximal d'obstacles inanimés par pelouse
 
     // VARIABLES DE CLASSE
-    private var deviceHeight = 0 //hauteur de l'appareil executant (en pixels)
-    private var deviceWidth = 0 //largeur de l'appareil executant (en pixels)
     private var drawing = true
     private var deadScreen = true
     private var ready = true
@@ -510,15 +508,6 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     }
 
 
-
-    // fonction de setup des dimensions de l'écran
-    fun getDimensions(deviceW:Int,deviceH:Int){
-        deviceWidth = deviceW
-        deviceHeight = deviceH
-    }
-
-
-
     // fonction de remise en route du jeu après une mort
     fun revive(){
         ready = true
@@ -533,7 +522,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
 
 
 
-    // fonction exécutée lors des événements de toucher
+    // fonction exécutée lors des événements de toucher de l'écran
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(e: MotionEvent): Boolean {
         when(e.action){
