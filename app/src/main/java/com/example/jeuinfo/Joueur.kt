@@ -33,7 +33,7 @@ class Joueur (x1:Float, y1:Float, largeur:Float, hauteur:Float, private val widt
                 this.alive = false
             } else if(this.y1 < 0) {
                 //repoussement du joueur vers le haut si sortie par le bas
-                this.y1 += DrawingView.saut*2
+                this.y1 += DrawingView.getSaut()*2
             }
         }
 
@@ -66,6 +66,6 @@ class Joueur (x1:Float, y1:Float, largeur:Float, hauteur:Float, private val widt
             for(bonus in bonuses){
                 if(bonus is BonusSaut) counter += 1
             }
-            DrawingView.saut = taillejoueur*2*counter
+            DrawingView.setSaut(taillejoueur*2*counter)
         }
     }

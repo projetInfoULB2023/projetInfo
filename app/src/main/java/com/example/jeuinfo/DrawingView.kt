@@ -69,16 +69,25 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     var y1 = 0F //ordonnée du premier contact du doigt
     var y2 = 0F //ordonnée du dernier contact du doigt
     private var direction = 0 //direction de mouvement du doigt
-
     companion object {
-        var Cheight =0
+        private var Cheight =0
+        fun getCheight():Int{
+            return Cheight
+        }
         var actualScore=0
-        var Cwidth=0
-        var saut = 0F
+        private var Cwidth=0
+        fun getCwidth():Int{
+            return Cwidth
+        }
+        private var saut = 0F
+        fun setSaut(x:Float){
+            saut=x
+        }
+        fun getSaut():Float{
+            return saut
+        }
         var toBeRemoved = mutableListOf<Element>()
     }
-
-
 
     // fonction de dessin de l'application
     private fun draw(){

@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
     // fonction exécutée à l'activation du menu "réglages"
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu,menu)

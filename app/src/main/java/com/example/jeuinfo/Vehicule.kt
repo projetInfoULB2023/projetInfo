@@ -15,11 +15,11 @@ class Vehicule(x1:Float, y1:Float, largeur:Float, hauteur:Float, val vitesse:Flo
     // réécriture de la fonction deplacement()
     override fun deplacement() {
         //permet la réapparition des véhicules de l'autre coté de l'écran
-        if(this.x1 >= DrawingView.Cwidth && vitesse > 0){
+        if(this.x1 >= DrawingView.getCwidth() && vitesse > 0){
             this.x1 =- largeur
         }
         else if(this.x1+largeur < 0 && vitesse < 0){
-            this.x1 = DrawingView.Cwidth.toFloat()
+            this.x1 = DrawingView.getCwidth().toFloat()
         }
         this.r.offset(vitesse,0F)
         this.x1 += vitesse

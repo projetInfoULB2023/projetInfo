@@ -5,6 +5,7 @@ package com.example.jeuinfo
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.RectF
+import com.example.jeuinfo.databinding.ActivityMainBinding
 import kotlin.math.abs
 import kotlin.random.Random
 
@@ -14,16 +15,14 @@ open class Bonus(x1:Float, y1:Float, largeur:Float, hauteur:Float, val vitesseX:
     private var dx = if(Random.nextFloat()>0.5) 1 else -1
     private var dy = if(Random.nextFloat()>0.5) 1 else -1
 
-
-
     //réécriture de la fonction deplacement() en autorisant le rebond
     override fun deplacement() {
         //rebond horizontal
-        if(this.x1+largeur >= DrawingView.Cwidth || this.x1 <= 0) {
+        if(this.x1+largeur >= DrawingView.getCwidth() || this.x1 <= 0) {
             dx *= -1
         }
         //rebond vertical
-        if(this.y1 < 0 || this.y1+hauteur > DrawingView.Cheight){
+        if(this.y1 < 0 || this.y1+hauteur > DrawingView.getCheight()){
             dy *= -1
         }
         this.r.offset(dx*vitesseX,dy*vitesseY)
