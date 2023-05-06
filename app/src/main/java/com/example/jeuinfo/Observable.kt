@@ -4,8 +4,8 @@ package com.example.jeuinfo
 import android.graphics.Canvas
 
 
-// classe Manager (gestion des Observers)
-class Manager {
+// classe Observable (gestion des Observers)
+class Observable {
     private val observers = mutableListOf<Observer>()
 
 

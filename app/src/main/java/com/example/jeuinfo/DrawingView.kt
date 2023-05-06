@@ -12,14 +12,11 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.abs
 
-
-
-// classe codant le visuel de l'application
 class DrawingView @JvmOverloads constructor (private var context: Context, attributes: AttributeSet? = null, defStyleAttr: Int = 0): SurfaceView(context, attributes,defStyleAttr),
     SurfaceHolder.Callback,Runnable {
     // VALEURS DE CLASSE
-    private val backgroundPaint = Paint() //couleur de fond
-    private var textPaint = Paint() //couleur des textes
+    private val backgroundPaint = Paint() //peinture de fond
+    private var textPaint = Paint() //peinture des textes
     private var livesPaint = Paint()
     private val random = Random()
     private val maxVoitures = 3 //nombre maximal d'obstacles mouvants par route
@@ -32,7 +29,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private var deadScreen = true
     private var ready = true
     private var tailleJoueur = 0F //taille de l'icône joueur
-    private var manager = Manager()
+    private var observable = Observable()
     private var setup = false
     private var decor = ArrayList<Element>() //obtention du décor depuis la classe Element
     private var obstacles = mutableListOf<Element>() //obtention des obstacles depuis la classe Element
@@ -112,7 +109,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             joueur.deadSound.start() //production du son de mort
             obstacles.clear() //suppression des obstacles mémorisés
             decor.clear() //suppression du décor mémorisé
-            manager.clear()
+            observable.clear()
             deadScreen = false
             backgroundPaint.color = Color.RED
             textPaint.color = Color.BLACK
@@ -157,7 +154,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private fun tickGame() {
         autoGen()
         //déplacement des obstacles (verticalement selon l'avancement de l'écran et horizontalement selon leur type et leur vitesse
-        manager.updateObs(canvas)
+        observable.updateObs(canvas)
         for(obs in obstacles) {
             if(obs is Deplacable){
                 obs.deplacement()
@@ -170,7 +167,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         //suppression des obstacles passés
         for(obs in toBeRemoved){
             obstacles.remove(obs)
-            manager.remove(obs)
+            observable.remove(obs)
         }
         toBeRemoved.clear()
 
@@ -205,7 +202,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         //génération d'une ligne de route
         val route = Element(0F,posLow-2*tailleJoueur,width.toFloat(),tailleJoueur*2,routeImage)
         decor.add(route)
-        manager.addObs(0,route)
+        observable.addObs(0,route)
 
         //Génération des véhicules
         val r = random.nextInt(3) //type du véhicule
@@ -252,7 +249,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             obstacleTemp = Vehicule(location*tailleJoueur*2,posLow-2*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,image)
 
             obstacles.add(obstacleTemp)
-            manager.addObs(obstacleTemp)
+            observable.addObs(obstacleTemp)
             vehiList.remove(location)
 
         }
@@ -266,7 +263,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
 
         //Manipulation pour mettre la nouvelle herbe en première position
         decor.add(herbe)
-        manager.addObs(0,herbe)
+        observable.addObs(0,herbe)
 
         //Génération des rochers
         val x = random.nextInt(maxCailloux)
@@ -296,7 +293,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 image
             )
             obstacles.add(obstacleTemp)
-            manager.addObs(obstacleTemp)
+            observable.addObs(obstacleTemp)
         }
     }
 
@@ -317,7 +314,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                         6*random.nextFloat(),6*random.nextFloat(),chaussures)
                 }
                 obstacles.add(objTemp)
-                manager.addObs(objTemp)
+                observable.addObs(objTemp)
             }
 
             //détermination de la position de l'élément le plus haut sur l'écran pour positionner le suivant en fonction
@@ -351,14 +348,14 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             }
             if (removable){
                 decor.remove(delItem)
-                manager.remove(delItem)
+                observable.remove(delItem)
             }
             val delItems=ArrayList<Element>()
             //suppression des véhicules
             for(el in obstacles) if(el.y1 > height+tailleJoueur*2) delItems.add(el)
             for(el in delItems) {
                 obstacles.remove(el)
-                manager.remove(el)
+                observable.remove(el)
             }
 
         }
@@ -374,10 +371,10 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             //génération des lignes de terrain
             val herbe = Element(0F,(i+2)*tailleJoueur,width.toFloat(),tailleJoueur*2 ,herbeImage)
             decor.add(herbe)
-            manager.addObs(0,herbe)
+            observable.addObs(0,herbe)
             val route = Element(0F,i*tailleJoueur,width.toFloat(),tailleJoueur*2,routeImage)
             decor.add(route)
-            manager.addObs(0,route)
+            observable.addObs(0,route)
             drawTerrain(i)
             genCailloux(i)
         }
@@ -442,7 +439,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             obstacleTemp = Vehicule(location*tailleJoueur*2,i*tailleJoueur, tailleJoueur*larg,tailleJoueur*2,speed*dx,
                 BitmapFactory.decodeResource(resources,path))
             obstacles.add(obstacleTemp)
-            manager.addObs(obstacleTemp)
+            observable.addObs(obstacleTemp)
         }
     }
 
@@ -478,7 +475,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 BitmapFactory.decodeResource(resources, path)
             )
             obstacles.add(obstacleTemp)
-            manager.addObs(obstacleTemp)
+            observable.addObs(obstacleTemp)
         }
     }
 
