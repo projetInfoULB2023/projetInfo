@@ -11,7 +11,7 @@ import kotlin.random.Random
 
 
 // classe héritante de Element et implémentant l'interface Deplacable
-open class Bonus(x1:Float, y1:Float, largeur:Float, hauteur:Float, val vitesseX:Float, val vitesseY:Float, image: Bitmap): Element(x1,y1,largeur,hauteur,image), Deplacable {
+open class Bonus(x1:Float, y1:Float, largeur:Float, hauteur:Float, val vitesseX:Float, val vitesseY:Float, image: Bitmap,val son:Son): Element(x1,y1,largeur,hauteur,image), Deplacable {
     private var dx = if(Random.nextFloat()>0.5) 1 else -1
     private var dy = if(Random.nextFloat()>0.5) 1 else -1
 

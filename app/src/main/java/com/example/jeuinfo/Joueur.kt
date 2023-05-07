@@ -41,6 +41,7 @@ class Joueur (x1:Float, y1:Float, largeur:Float, hauteur:Float, private val widt
         // fonction de mort du joueur
         fun mort() {
             lateinit var delItem:Bonus
+            deadSound.start()
             //suppression du bonus vie s'il existe
             for(bonus in bonuses){
                 if(bonus is BonusVie){

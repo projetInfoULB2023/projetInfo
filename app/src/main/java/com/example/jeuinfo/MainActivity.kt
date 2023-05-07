@@ -110,8 +110,6 @@ class MainActivity : AppCompatActivity() {
         drawingView.pause() //mise en pause du jeu
     }
 
-
-
     // fonction exécutée à la remise en route de l'Activity
     override fun onResume() {
         super.onResume()

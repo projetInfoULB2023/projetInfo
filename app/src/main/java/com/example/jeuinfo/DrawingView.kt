@@ -59,6 +59,8 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     private var coeur = BitmapFactory.decodeResource(resources,R.drawable.coeur)
     private var chaussures = BitmapFactory.decodeResource(resources,R.drawable.chaussures)
     private var sonMusique = Son(context,R.raw.musiquefond)
+    private var sonBonus = Son(context,R.raw.bonus)
+    private var sonSaut = Son(context,R.raw.jump)
 
     // VARIABLES D'ETAT (liées à l'évolution de la partie)
     private var score = 0 //setup du score joueur
@@ -156,11 +158,16 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         herbeImage=Bitmap.createScaledBitmap(herbeImage,width,tailleJoueur.toInt()*2,true)
     }
 
-
+    private fun checkSound(){
+        if(!sonMusique.playing()){
+            sonMusique.start()
+        }
+    }
 
     // fonction de mise à jour de l'affichage
     private fun tickGame() {
         autoGen()
+        checkSound()
         //déplacement des obstacles (verticalement selon l'avancement de l'écran et horizontalement selon leur type et leur vitesse
         observable.updateObs(canvas)
         for(obs in obstacles) {
@@ -316,10 +323,10 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
                 lateinit var objTemp:Bonus
                 if(random.nextFloat()>0.2) {
                     objTemp=BonusVie(width*random.nextFloat()-tailleJoueur*2,height*random.nextFloat()-tailleJoueur*2,tailleJoueur*3,tailleJoueur*3,
-                    6*random.nextFloat(),6*random.nextFloat(),coeur)
+                    6*random.nextFloat(),6*random.nextFloat(),coeur,sonBonus)
                 } else {
                     objTemp=BonusSaut(width*random.nextFloat()-tailleJoueur*2,height*random.nextFloat()-tailleJoueur*2,tailleJoueur*3,tailleJoueur*3,
-                        6*random.nextFloat(),6*random.nextFloat(),chaussures)
+                        6*random.nextFloat(),6*random.nextFloat(),chaussures,sonBonus)
                 }
                 obstacles.add(objTemp)
                 observable.addObs(objTemp)
@@ -496,7 +503,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
         //alignement du joueur et des obstacles
         posJoueur= arrayOf(width/12*7F-tailleJoueur,startingPos)
         joueur = Joueur((posJoueur[0]-tailleJoueur),(posJoueur[1]+tailleJoueur),tailleJoueur*2,
-            tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,deadSound,BitmapFactory.decodeResource(resources,R.drawable.bersini))
+            tailleJoueur*2,width.toFloat(),height.toFloat(),tailleJoueur,deadSound,BitmapFactory.decodeResource(resources,R.drawable.avatar))
     }
 
 
@@ -504,6 +511,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     // fonction exécutée pour mettre le jeu en pause
     fun pause(){
         drawing = false
+        sonMusique.stop()
         thread.join()
     }
 
@@ -512,6 +520,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
     // fonction exécutée pour remettre le jeu en route
     fun resume(){
         drawing = true
+        sonMusique.resume()
         thread=Thread(this)
         thread.start()
     }
@@ -547,7 +556,7 @@ class DrawingView @JvmOverloads constructor (private var context: Context, attri
             MotionEvent.ACTION_UP -> {
                 if(!cancelUp) {
                     x2 = e.rawX; y2 = e.rawY //obtention des coordonnées du relâchement
-
+                    sonSaut.start()
                     //détermination de la direction du glissement
                     if(abs(x2-x1)<5 && abs(y2-y1)<5) {
                         //mouvement insuffisant, simple click considéré, donc un mouvement vers le haut
